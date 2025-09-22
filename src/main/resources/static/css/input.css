@@ -1,0 +1,6 @@
+@import "tailwindcss";
+
+/* (Opcional) suas variáveis/utilitários custom */
+:root {
+    --color-destaque: #706258;
+}
