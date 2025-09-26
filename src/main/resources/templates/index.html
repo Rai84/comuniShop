@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Painel do Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 p-6">
+    <h1 class="text-2xl font-bold mb-6">Painel do Admin</h1>
+
+    <!-- Usuários -->
+    <h2 class="text-xl font-semibold mb-2">Usuários</h2>
+    <table class="min-w-full bg-white shadow rounded mb-6">
+        <thead>
+            <tr class="bg-gray-200 text-left">
+                <th class="p-2">ID</th>
+                <th class="p-2">Nome</th>
+                <th class="p-2">Email</th>
+                <th class="p-2">Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="u : ${usuarios}" class="border-b">
+                <td class="p-2" th:text="${u.id}"></td>
+                <td class="p-2" th:text="${u.nome}"></td>
+                <td class="p-2" th:text="${u.email}"></td>
+                <td class="p-2" th:text="${u.tipo}"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Clientes -->
+    <h2 class="text-xl font-semibold mb-2">Clientes</h2>
+    <table class="min-w-full bg-white shadow rounded">
+        <thead>
+            <tr class="bg-gray-200 text-left">
+                <th class="p-2">ID</th>
+                <th class="p-2">Nome</th>
+                <th class="p-2">Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="c : ${clientes}" class="border-b">
+                <td class="p-2" th:text="${c.id}"></td>
+                <td class="p-2" th:text="${c.nome}"></td>
+                <td class="p-2" th:text="${c.email}"></td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
