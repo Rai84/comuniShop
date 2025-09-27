@@ -1,0 +1,24 @@
+<div th:fragment="menuFragment" id="menuContainer">
+    <nav class="w-full flex items-center px-6 py-0.5 shadow-md gap-20">
+        <!-- Logo -->
+        <div class="flex items-center space-x-2">
+            <a th:href="@{/}"><span class="text-xl font-bold cursor-pointer">ComuniShop</span></a>
+        </div>
+        <!-- Ações principais -->
+        <div class="flex items-center space-x-4">
+            <a th:href="@{/oferecer-servicos}" class="px-4 py-2 rounded-md font-medium hover:underline flex items-center space-x-1">
+                Oferecer meus serviços
+            </a>
+            <a th:href="@{/explorar-servicos}" class="px-4 py-2 rounded-md font-medium hover:underline flex items-center space-x-1">
+                Explorar serviços e comércios
+            </a>
+        </div>
+        <!-- Botão Login (chama o modal login) -->
+        <div class="absolute right-6">
+            <button data-modal-target="loginModal" data-modal-toggle="loginModal"
+                    class="py-1 px-4 bg-blue-500 text-white rounded-md font-semibold">
+                Login
+            </button>
+        </div>
+    </nav>
+</div>

@@ -1,50 +1,15 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Painel do Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+<head th:replace="fragments/head :: headFragment('Página Inicial')">
 </head>
-<body class="bg-gray-100 text-gray-900 p-6">
-    <h1 class="text-2xl font-bold mb-6">Painel do Admin</h1>
+<body class="bg-gray-100 text-gray-900">
+    <div th:replace="fragments/menuIndex :: menuFragment"></div>
+    <div th:replace="fragments/login :: loginFragment"></div>
 
-    <!-- Usuários -->
-    <h2 class="text-xl font-semibold mb-2">Usuários</h2>
-    <table class="min-w-full bg-white shadow rounded mb-6">
-        <thead>
-            <tr class="bg-gray-200 text-left">
-                <th class="p-2">ID</th>
-                <th class="p-2">Nome</th>
-                <th class="p-2">Email</th>
-                <th class="p-2">Tipo</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="u : ${usuarios}" class="border-b">
-                <td class="p-2" th:text="${u.id}"></td>
-                <td class="p-2" th:text="${u.nome}"></td>
-                <td class="p-2" th:text="${u.email}"></td>
-                <td class="p-2" th:text="${u.tipo}"></td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="flex justify-start flex-col items-center w-[100vw] h-[90vh] relative top-2.5">
+        <h1 class="text-4xl mt-6 font-sour">Facilitando sua vida, fortalecendo o bairro</h1>
+        <h2 class="text-2xl font-light mb-4">Encontre, agende e apoie o comércio local</h2>
 
-    <!-- Clientes -->
-    <h2 class="text-xl font-semibold mb-2">Clientes</h2>
-    <table class="min-w-full bg-white shadow rounded">
-        <thead>
-            <tr class="bg-gray-200 text-left">
-                <th class="p-2">ID</th>
-                <th class="p-2">Nome</th>
-                <th class="p-2">Email</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="c : ${clientes}" class="border-b">
-                <td class="p-2" th:text="${c.id}"></td>
-                <td class="p-2" th:text="${c.nome}"></td>
-                <td class="p-2" th:text="${c.email}"></td>
-            </tr>
-        </tbody>
-    </table>
+    </div>
 </body>
 </html>

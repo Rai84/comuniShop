@@ -1,0 +1,11 @@
+<!-- src/main/resources/templates/fragments/menu.html -->
+<div th:fragment="menuFragment(user)">
+    <nav class="menuHome">
+        <span>Bem-vindo,</span>
+        <ul>
+            <li><a th:href="@{/home}">Home</a></li>
+            <li><a th:href="@{/produtos}">Produtos</a></li>
+            <li><a th:href="@{/carrinho}">Carrinho</a></li>
+        </ul>
+    </nav>
+</div>

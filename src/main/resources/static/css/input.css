@@ -3,3 +3,13 @@
 :root {
     --color-destaque: #706258;
 }
+
+@layer base {
+    body {
+        @apply font-sans;
+    }
+
+    .font-sour {
+        font-family: "Sour Gummy", sans-serif;
+    }
+}
