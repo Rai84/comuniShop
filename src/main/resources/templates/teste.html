@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: headFragment('Página Inicial')">
+</head>
+<body class="text-gray-900 bg-gray-100">
+    <div th:replace="fragments/menuIndex :: menuFragment"></div>
+    <div th:replace="fragments/login :: loginFragment"></div>
+
+    <div class="flex justify-start flex-col items-center w-[100vw] h-[90vh] relative top-2.5">
+        <h1 class="mt-6 "></h1>
+        <h2 class="mb-4  "></h2>
+
+        
+
+        <div class="flex bg-blue-400">
+
+            
+            
+            
+
+            <section class="grid max-w-6xl gap-8 px-6 pt-24 pb-32 mx-auto md:grid-cols-2">
+                <!-- Card 1 -->
+                <div class="flex flex-col items-center justify-center p-6 text-center transition bg-white shadow-lg rounded-2xl hover:shadow-xl">
+                    <div class="mb-4 text-orange-500">
+                        <i class="text-5xl bi bi-shop"></i>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold">Cadastre seu serviço</h3>
+                    <p class="mb-4 text-gray-600">Mostre seu trabalho para quem está por perto e conquiste novos clientes.</p>
+                    <a href="/cadastro-servico" class="px-5 py-2 font-medium text-white transition bg-orange-500 rounded-lg hover:bg-orange-600">Oferecer meus serviços</a>
+                </div>
+                <!-- Card 2  -->
+                <div class="flex flex-col items-center justify-center p-6 text-center transition bg-white shadow-lg rounded-2xl hover:shadow-xl">
+                    <div class="mb-4 text-orange-500">
+                        <i class="text-5xl bi bi-geo-alt"></i>
+                    </div>
+                    <h3 class="mb-2 text-xl font-bold">Entre e descubra seu bairro</h3>
+                    <p class="mb-4 text-gray-600">Explore lojas, serviços e autônomos bem perto de você.</p>
+                    <a href="/explorar" class="px-5 py-2 font-medium text-white transition bg-orange-500 rounded-lg hover:bg-orange-600">Explorar agora</a>
+                </div>
+            </section>
+        </div>
+        
+    </div>
+</body>
+</html>

@@ -2,55 +2,58 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/head :: headFragment('Página Inicial')">
 </head>
-<body class="bg-gray-100 text-gray-900">
-    <div th:replace="fragments/menuIndex :: menuFragment"></div>
+<body class="text-gray-900 bg-gray-100">
+    <div ></div>
     <div th:replace="fragments/login :: loginFragment"></div>
 
-    <div class="flex justify-start flex-col items-center w-[100vw] h-[90vh] relative top-2.5">
-        <h1 class="text-4xl mt-6 font-sour">Facilitando sua vida, fortalecendo o bairro</h1>
-        <h2 class="text-2xl font-light mb-4 ">Encontre, agende e apoie o comércio local</h2>
-
-        <div class="flex items-center w-full max-w-lg mx-auto">
-            <input type="text" placeholder="Digite seu Cep" class="flex-1 rounded-l-lg border border-gray-300 px-4 py-2 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none">
-            <button class="px-5 py-2 rounded-r-lg font-medium border border-orange-500 bg-orange-500 text-white hover:bg-orange-600 transition flex items-center gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"/>
-                </svg>
-                <span>Buscar</span>
-            </button>
-        </div>
-
-        <div class="flex">
-
-            <div class="absolute left-64 top-[45vh] max-w-96 text-2xl">
-                <h1 class="mt-6">O app que conecta você ao seu bairro.</h1> 
-                <h2 class="mb-4">Peça, agende e receba de quem está bem perto.</h2>
+    <div class="grid grid-cols-1 grid-rows-[45px_70px_45px_40px_1fr] gap-0 h-[100vh] w-[100vw]">
+        <div th:replace="fragments/menuIndex :: menuFragment" class="col-start-1 row-start-1 div1"></div>
+        <div class="flex items-center justify-center col-start-1 row-start-2 mt-6 text-4xl div2 font-sour">Facilitando sua vida, fortalecendo o bairro</div>
+        <div class="flex items-center justify-center col-start-1 row-start-3 mb-4 text-2xl font-light div3">Encontre, agende e apoie o comércio local</div>
+        <div class="col-start-1 row-start-4 div4">
+            <div class="flex items-center w-full max-w-lg mx-auto">
+                <input type="text" placeholder="Digite seu Cep" class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
+                <button class="flex items-center gap-2 px-5 py-2 font-medium text-white transition bg-orange-500 border border-orange-500 rounded-r-lg hover:bg-orange-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"/>
+                    </svg>
+                    <span>Buscar</span>
+                </button>
             </div>
-            
-            <img th:src="@{/img/img1.svg}" alt="Imagem ilustrativa" class="w-[30rem] mr-40 mt-[119px]">
-
-            <section class="max-w-6xl mx-auto px-6 pt-24 pb-32 grid md:grid-cols-2 gap-8">
+        </div>
+        <div class="col-start-1 row-start-5 div5 grid grid-cols-[550px_1fr] mt-2.5">
+            <div class="flex items-end div1">
+                <img th:src="@{/img/img1.svg}" alt="Imagem ilustrativa" class="w-[30rem]">
+                <div class="relative text-[20px] -left-56 mb-48">
+                    <h1 class="w-[20rem]">O app que conecta você ao seu bairro.</h1> 
+                    <h2 class="w-[20rem]">Peça, agende e receba de quem está bem perto.</h2>
+                </div>
+            </div>
+            <div class="">
+                <section class="grid max-w-6xl gap-8 px-6 pt-24 pb-32 mx-auto md:grid-cols-2">
                 <!-- Card 1 -->
-                <div class="bg-white shadow-lg rounded-2xl p-6 flex flex-col items-center text-center hover:shadow-xl transition justify-center">
-                    <div class="text-orange-500 mb-4">
-                        <i class="bi bi-shop text-5xl"></i>
+                <div class="flex flex-col items-center justify-center p-6 text-center transition bg-white shadow-lg rounded-2xl hover:shadow-xl">
+                    <div class="mb-4 text-orange-500">
+                        <i class="text-5xl bi bi-shop"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Cadastre seu serviço</h3>
-                    <p class="text-gray-600 mb-4">Mostre seu trabalho para quem está por perto e conquiste novos clientes.</p>
-                    <a href="/cadastro-servico" class="bg-orange-500 text-white px-5 py-2 rounded-lg font-medium hover:bg-orange-600 transition">Oferecer meus serviços</a>
+                    <h3 class="mb-2 text-xl font-bold">Cadastre seu serviço</h3>
+                    <p class="mb-4 text-gray-600">Mostre seu trabalho para quem está por perto e conquiste novos clientes.</p>
+                    <a href="/cadastro-servico" class="px-5 py-2 font-medium text-white transition bg-orange-500 rounded-lg hover:bg-orange-600">Oferecer meus serviços</a>
                 </div>
                 <!-- Card 2  -->
-                <div class="bg-white shadow-lg rounded-2xl p-6 flex flex-col items-center text-center hover:shadow-xl transition justify-center">
-                    <div class="text-orange-500 mb-4">
-                        <i class="bi bi-geo-alt text-5xl"></i>
+                <div class="flex flex-col items-center justify-center p-6 text-center transition bg-white shadow-lg rounded-2xl hover:shadow-xl">
+                    <div class="mb-4 text-orange-500">
+                        <i class="text-5xl bi bi-geo-alt"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-2">Entre e descubra seu bairro</h3>
-                    <p class="text-gray-600 mb-4">Explore lojas, serviços e autônomos bem perto de você.</p>
-                    <a href="/explorar" class="bg-orange-500 text-white px-5 py-2 rounded-lg font-medium hover:bg-orange-600 transition">Explorar agora</a>
+                    <h3 class="mb-2 text-xl font-bold">Entre e descubra seu bairro</h3>
+                    <p class="mb-4 text-gray-600">Explore lojas, serviços e autônomos bem perto de você.</p>
+                    <a href="/explorar" class="px-5 py-2 font-medium text-white transition bg-orange-500 rounded-lg hover:bg-orange-600">Explorar agora</a>
                 </div>
             </section>
+            </div>
+
         </div>
-        
     </div>
+     
 </body>
 </html>
