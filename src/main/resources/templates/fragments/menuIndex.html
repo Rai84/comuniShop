@@ -1,22 +1,22 @@
 <div th:fragment="menuFragment" id="menuContainer">
-    <nav class="w-full flex items-center px-6 py-0.5 shadow-md gap-20">
+    <nav class="w-full flex items-center px-6 py-0.5 shadow-md gap-20 fixed z-10 bg-gray-100">
         <!-- Logo -->
         <div class="flex items-center space-x-2">
             <a th:href="@{/}"><span class="text-xl font-bold cursor-pointer">ComuniShop</span></a>
         </div>
         <!-- Ações principais -->
         <div class="flex items-center space-x-4">
-            <a th:href="@{/oferecer-servicos}" class="px-4 py-2 rounded-md font-medium hover:underline flex items-center space-x-1">
+            <a th:href="@{/oferecer-servicos}" class="flex items-center px-4 py-2 space-x-1 font-medium rounded-md hover:underline">
                 Oferecer meus serviços
             </a>
-            <a th:href="@{/explorar-servicos}" class="px-4 py-2 rounded-md font-medium hover:underline flex items-center space-x-1">
+            <a th:href="@{/explorar-servicos}" class="flex items-center px-4 py-2 space-x-1 font-medium rounded-md hover:underline">
                 Explorar serviços e comércios
             </a>
         </div>
         <!-- Botão Login (chama o modal login) -->
         <div class="absolute right-6">
             <button data-modal-target="loginModal" data-modal-toggle="loginModal"
-                    class="py-1 px-4 bg-orange-500 text-white rounded-md font-semibold">
+                    class="px-4 py-1 font-semibold text-white bg-orange-500 rounded-md">
                 Login
             </button>
         </div>

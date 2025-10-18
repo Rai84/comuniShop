@@ -4,18 +4,27 @@ import jakarta.persistence.*;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "usuario", schema = "public")
+@Table(name = "usuario")
 public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "criado_em", nullable = false, columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(name = "criado_em", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private OffsetDateTime criadoEm;
+
+    @Column(name = "atualizado_em", columnDefinition = "TIMESTAMP NULL DEFAULT NULL")
+    private OffsetDateTime atualizadoEm;
 
     @Column(nullable = false)
     private String nome;
+
+    @Column(nullable = false, unique = true, length = 20)
+    private String cpf;
+
+    @Column(nullable = false, length = 20)
+    private String telefone;
 
     @Column(nullable = false, unique = true)
     private String email;
@@ -23,15 +32,23 @@ public class Usuario {
     @Column(nullable = false)
     private String senha;
 
-    // O tipo é um ENUM no Postgres (public.tipo_usuario)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private TipoUsuario tipo = TipoUsuario.USUARIO;
+    @Column(nullable = false, columnDefinition = "ENUM('CLIENTE', 'COMERCIANTE', 'ADMIN', 'ESTOQUISTA') DEFAULT 'CLIENTE'")
+    private TipoUsuario tipo = TipoUsuario.CLIENTE;
 
-    @Column(name = "atualizad_em", columnDefinition = "TIMESTAMP WITH TIME ZONE")
-    private OffsetDateTime atualizadEm;
+    // ================== Hooks ==================
+    @PrePersist
+    protected void onCreate() {
+        criadoEm = OffsetDateTime.now();
+        atualizadoEm = criadoEm;
+    }
 
-    // Getters e Setters
+    @PreUpdate
+    protected void onUpdate() {
+        atualizadoEm = OffsetDateTime.now();
+    }
+
+    // ================== Getters e Setters ==================
     public Integer getId() {
         return id;
     }
@@ -48,12 +65,36 @@ public class Usuario {
         this.criadoEm = criadoEm;
     }
 
+    public OffsetDateTime getAtualizadoEm() {
+        return atualizadoEm;
+    }
+
+    public void setAtualizadoEm(OffsetDateTime atualizadoEm) {
+        this.atualizadoEm = atualizadoEm;
+    }
+
     public String getNome() {
         return nome;
     }
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public String getEmail() {
@@ -79,5 +120,4 @@ public class Usuario {
     public void setTipo(TipoUsuario tipo) {
         this.tipo = tipo;
     }
-
 }

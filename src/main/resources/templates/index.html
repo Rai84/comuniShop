@@ -4,10 +4,11 @@
 </head>
 <body class="text-gray-900 bg-gray-100">
     <div ></div>
-    <div th:replace="fragments/login :: loginFragment"></div>
+    <div th:replace="~{fragments/login :: loginFragment}"></div>
+    <div th:replace="~{fragments/criarConta :: criarContaFragment}"></div>
 
-    <div class="grid grid-cols-1 grid-rows-[45px_70px_45px_40px_1fr] gap-0 h-[100vh] w-[100vw]">
-        <div th:replace="fragments/menuIndex :: menuFragment" class="col-start-1 row-start-1 div1"></div>
+    <div class="grid grid-cols-1 grid-rows-[45px_70px_45px_40px_1fr] gap-0 h-[100vh] w-[99vw]">
+        <div th:replace="~{fragments/menuIndex :: menuFragment}" class="col-start-1 row-start-1 div1"></div>
         <div class="flex items-center justify-center col-start-1 row-start-2 mt-6 text-4xl div2 font-sour">Facilitando sua vida, fortalecendo o bairro</div>
         <div class="flex items-center justify-center col-start-1 row-start-3 mb-4 text-2xl font-light div3">Encontre, agende e apoie o comércio local</div>
         <div class="col-start-1 row-start-4 div4">
@@ -21,16 +22,16 @@
                 </button>
             </div>
         </div>
-        <div class="col-start-1 row-start-5 div5 grid grid-cols-[550px_1fr] mt-2.5">
-            <div class="flex items-end div1">
-                <img th:src="@{/img/img1.svg}" alt="Imagem ilustrativa" class="w-[30rem]">
-                <div class="relative text-[20px] -left-56 mb-48">
+        <div class="col-start-1 row-start-5 div5 grid grid-cols-[500px_1fr] mt-2.5 w-[99vw]">
+            <div class="flex items-center div1">
+                <img th:src="@{/img/img5.png}" alt="Imagem ilustrativa" class="w-[95%]">
+                <div class="relative left-[-300px]">
                     <h1 class="w-[20rem]">O app que conecta você ao seu bairro.</h1> 
                     <h2 class="w-[20rem]">Peça, agende e receba de quem está bem perto.</h2>
-                </div>
+                </div> 
             </div>
-            <div class="">
-                <section class="grid max-w-6xl gap-8 px-6 pt-24 pb-32 mx-auto md:grid-cols-2">
+            
+            <section class="grid max-w-6xl gap-8 px-6 pt-24 pb-32 mx-auto md:grid-cols-2 div2">
                 <!-- Card 1 -->
                 <div class="flex flex-col items-center justify-center p-6 text-center transition bg-white shadow-lg rounded-2xl hover:shadow-xl">
                     <div class="mb-4 text-orange-500">
@@ -50,7 +51,7 @@
                     <a href="/explorar" class="px-5 py-2 font-medium text-white transition bg-orange-500 rounded-lg hover:bg-orange-600">Explorar agora</a>
                 </div>
             </section>
-            </div>
+            
 
         </div>
     </div>
