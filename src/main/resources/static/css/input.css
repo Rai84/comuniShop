@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
-:root {
-    --color-destaque: #706258;
+@theme {
+    --color-destaque: #3AAFA9;
+    --color-destaque2: #2B7A78;
 }
 
 @layer base {
@@ -15,5 +16,13 @@
 
     .font-alumni {
         font-family: "Alumni Sans Pinstripe", sans-serif;
+    }
+
+    .destaque {
+        background-color: var(--color-destaque);
+    }
+
+    .bg-cor-destaque {
+        background-color: var(--color-destaque);
     }
 }

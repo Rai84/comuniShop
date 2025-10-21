@@ -13,8 +13,8 @@
         <div class="flex items-center justify-center col-start-1 row-start-3 mb-4 text-2xl font-light div3">Encontre, agende e apoie o comércio local</div>
         <div class="col-start-1 row-start-4 div4">
             <div class="flex items-center w-full max-w-lg mx-auto">
-                <input type="text" placeholder="Digite seu Cep" class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
-                <button class="flex items-center gap-2 px-5 py-2 font-medium text-white transition bg-orange-500 border border-orange-500 rounded-r-lg hover:bg-orange-600">
+                <input type="text" placeholder="Digite seu Cep" class="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg outline-none focus:ring-2">
+                <button class="flex items-center gap-2 px-5 py-2 font-medium text-white transition border rounded-r-lg border-[--color-destaque] bg-[--color-destaque] hover:bg-[--color-destaque2]">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"/>
                     </svg>
@@ -24,7 +24,7 @@
         </div>
         <div class="col-start-1 row-start-5 div5 grid grid-cols-[500px_1fr] mt-2.5 w-[99vw]">
             <div class="flex items-center div1">
-                <img th:src="@{/img/img5.png}" alt="Imagem ilustrativa" class="w-[95%]">
+                <img th:src="@{/img/img1.svg}" alt="Imagem ilustrativa" class="w-[95%]">
                 <div class="relative left-[-300px]">
                     <h1 class="w-[20rem]">O app que conecta você ao seu bairro.</h1> 
                     <h2 class="w-[20rem]">Peça, agende e receba de quem está bem perto.</h2>
@@ -34,21 +34,21 @@
             <section class="grid max-w-6xl gap-8 px-6 pt-24 pb-32 mx-auto md:grid-cols-2 div2">
                 <!-- Card 1 -->
                 <div class="flex flex-col items-center justify-center p-6 text-center transition bg-white shadow-lg rounded-2xl hover:shadow-xl">
-                    <div class="mb-4 text-orange-500">
+                    <div class="mb-4 text-destaque">
                         <i class="text-5xl bi bi-shop"></i>
                     </div>
                     <h3 class="mb-2 text-xl font-bold">Cadastre seu serviço</h3>
                     <p class="mb-4 text-gray-600">Mostre seu trabalho para quem está por perto e conquiste novos clientes.</p>
-                    <a href="/cadastro-servico" class="px-5 py-2 font-medium text-white transition bg-orange-500 rounded-lg hover:bg-orange-600">Oferecer meus serviços</a>
+                    <a href="/cadastro-servico" class="px-5 py-2 font-medium text-white transition rounded-lg bg-destaque hover:bg-destaque2">Oferecer meus serviços</a>
                 </div>
                 <!-- Card 2  -->
                 <div class="flex flex-col items-center justify-center p-6 text-center transition bg-white shadow-lg rounded-2xl hover:shadow-xl">
-                    <div class="mb-4 text-orange-500">
+                    <div class="mb-4 text-destaque">
                         <i class="text-5xl bi bi-geo-alt"></i>
                     </div>
                     <h3 class="mb-2 text-xl font-bold">Entre e descubra seu bairro</h3>
                     <p class="mb-4 text-gray-600">Explore lojas, serviços e autônomos bem perto de você.</p>
-                    <a href="/explorar" class="px-5 py-2 font-medium text-white transition bg-orange-500 rounded-lg hover:bg-orange-600">Explorar agora</a>
+                    <a href="/explorar" class="px-5 py-2 font-medium text-white transition rounded-lg bg-destaque hover:bg-destaque2">Explorar agora</a>
                 </div>
             </section>
             

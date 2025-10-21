@@ -1,23 +1,86 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
 <head th:replace="~{fragments/head :: headFragment('Home')}"></head>
-<body class="min-h-screen bg-gray-100">
 
-  <div class="max-w-3xl p-6 mx-auto mt-10 bg-white rounded-lg shadow">
-    <h1 class="mb-4 text-2xl font-bold text-gray-900">
-      Bem-vindo, <span th:text="${usuario.nome}">Usuário</span>!
-    </h1>
+<body class="text-gray-900 bg-gray-100">
+  <div th:replace="~{fragments/menuHome :: menuFragment}"></div>
 
-    <p class="text-gray-700"><strong>E-mail:</strong> <span th:text="${usuario.email}">email@teste.com</span></p>
-    <p class="text-gray-700"><strong>Tipo:</strong> <span th:text="${usuario.tipo}">USUARIO</span></p>
+  <!-- BARRA LATERAL -->
+  <nav class="w-8 h-[calc(100vh-40px)] bg-gray-600 fixed flex items-center justify-between flex-col">
+    <div class="flex flex-col items-center gap-1 pt-4 text-white">
+      <i class="bi bi-box"></i>
+      <i class="bi bi-box"></i>
+      <i class="bi bi-box"></i>
+      <i class="bi bi-box"></i>
+    </div>
+    <button class="w-6 h-20 bg-[--color-destaque] rounded-4xl">
+      <i class="text-2xl text-white bi bi-chevron-compact-right"></i>
+    </button>
+    <button id="abrirModal" class="text-lg text-white transition hover:text-[--color-destaque] pb-2.5">
+      <i class="bi bi-gear-fill"></i>
+    </button>
+  </nav>
 
-    <div class="mt-6">
-      <a th:href="@{/logout}"
-         class="inline-block px-4 py-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600">
-         Sair
-      </a>
+  <!-- MODAL -->
+  <div id="popup-modal"
+       class="fixed bottom-0 z-50 hidden w-full max-w-sm p-4 transition-all duration-200 scale-95 opacity-0 left-8">
+    <div class="relative bg-white shadow-xl rounded-xl dark:bg-gray-800" id="conteudo-modal">
+      <!-- BOTÃO FECHAR -->
+      <button id="fecharModal"
+        class="absolute flex items-center justify-center w-8 h-8 text-sm text-gray-400 rounded-lg top-3 right-3 hover:text-gray-900 dark:hover:text-white">
+        <i class="bi bi-x-lg"></i>
+      </button>
+
+      <!-- CONTEÚDO -->
+      <div class="p-6 text-center">
+        <h3 class="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-100">
+          ⚙️ Configurações
+        </h3>
+        <p class="mb-6 text-gray-600 dark:text-gray-300">
+          Modal no canto inferior esquerdo, sem fundo e fecha ao clicar fora.
+        </p>
+        <button id="fecharModal2"
+          class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+          Fechar
+        </button>
+      </div>
     </div>
   </div>
 
+  <!-- SCRIPT DE CONFIGURAÇÃO -->
+  <script>
+    const modalEl = document.getElementById('popup-modal');
+    const conteudoModal = document.getElementById('conteudo-modal');
+
+    const options = {
+      placement: 'bottom-left',
+      backdrop: 'static', // sem overlay
+      backdropClasses: 'hidden',
+      closable: true,
+      onShow: () => {
+        modalEl.classList.remove('hidden', 'opacity-0', 'scale-95');
+        modalEl.classList.add('opacity-100', 'scale-100');
+      },
+      onHide: () => {
+        modalEl.classList.add('opacity-0', 'scale-95');
+        setTimeout(() => modalEl.classList.add('hidden'), 150);
+      }
+    };
+
+    const modal = new Modal(modalEl, options);
+
+    // Botões internos
+    document.getElementById('abrirModal').addEventListener('click', () => modal.show());
+    document.getElementById('fecharModal').addEventListener('click', () => modal.hide());
+    document.getElementById('fecharModal2').addEventListener('click', () => modal.hide());
+
+    // 👇 Fecha ao clicar fora do conteúdo
+    document.addEventListener('click', (event) => {
+      const clicouFora = !conteudoModal.contains(event.target) && !event.target.closest('#abrirModal');
+      if (!modalEl.classList.contains('hidden') && clicouFora) {
+        modal.hide();
+      }
+    });
+  </script>
 </body>
 </html>
