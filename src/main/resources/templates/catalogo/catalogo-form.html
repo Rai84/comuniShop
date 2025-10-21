@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Gerenciar Imagens do Catálogo</title>
+</head>
+<body>
+  <h1 th:text="${item.id == null} ? 'Novo Item' : 'Editar Item'"></h1>
+
+  <form th:action="@{/catalogo/salvar}" th:object="${item}" method="post" enctype="multipart/form-data">
+    <input type="hidden" th:field="*{id}">
+
+    <!-- Campos do item -->
+    <label>Negócio:</label><br>
+    <select th:field="*{negocio.id}" required>
+      <option value="">-- Selecione --</option>
+      <option th:each="n : ${negocios}" th:value="${n.id}" th:text="${n.nome}"></option>
+    </select><br><br>
+
+    <label>Nome:</label><br>
+<input type="text" th:field="*{nome}" required><br><br>
+
+
+    <label>Descrição:</label><br>
+    <textarea th:field="*{descricao}" rows="3"></textarea><br><br>
+
+    <label>Preço:</label><br>
+    <input type="number" step="0.01" th:field="*{preco}" required><br><br>
+
+    <label>Disponível:</label>
+    <input type="checkbox" th:field="*{disponivel}"><br><br>
+
+    <h3>Imagens já cadastradas</h3>
+<div th:if="${imagens != null and !imagens.isEmpty()}">
+  <table border="1" cellpadding="8">
+    <thead>
+      <tr>
+        <th>Preview</th>
+        <th>Ordem</th>
+        <th>Principal</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="img : ${imagens}">
+        <td><img th:src="${img.url}" width="100"></td>
+        <td th:text="${img.ordem}"></td>
+        <td th:text="${img.principal} ? 'Sim' : 'Não'"></td>
+        <td>
+          <a th:href="@{/catalogo/imagem/mover/{id}/up(id=${img.id})}">⬆️</a>
+          <a th:href="@{/catalogo/imagem/mover/{id}/down(id=${img.id})}">⬇️</a> |
+          <a th:href="@{/catalogo/imagem/principal/{id}(id=${img.id})}">Principal</a> |
+          <a th:href="@{/catalogo/imagem/excluir/{id}(id=${img.id})}"
+             onclick="return confirm('Deseja excluir esta imagem?')">Excluir</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+    <hr>
+
+    <h3>Adicionar novas imagens</h3>
+    <p>Selecione uma ou mais imagens:</p>
+    <input type="file" name="files" multiple><br><br>
+
+    <button type="submit">Salvar</button>
+    <a th:href="@{/catalogo}">Cancelar</a>
+  </form>
+</body>
+</html>

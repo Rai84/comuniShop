@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Cadastro de Negócio</title>
+</head>
+<body>
+  <h1 th:text="${negocio.id == null} ? 'Novo Negócio' : 'Editar Negócio'"></h1>
+
+  <form th:action="@{/negocios/salvar}" th:object="${negocio}" method="post">
+    <input type="hidden" th:field="*{id}">
+
+    <label>Nome:</label><br>
+    <input type="text" th:field="*{nome}" required><br><br>
+
+    <label>Descrição:</label><br>
+    <textarea th:field="*{descricao}" rows="4"></textarea><br><br>
+
+    <label>Telefone comercial:</label><br>
+    <input type="text" th:field="*{telefoneComercial}"><br><br>
+
+    <label>Email comercial:</label><br>
+    <input type="email" th:field="*{emailComercial}"><br><br>
+
+    <label>Hora de abertura:</label><br>
+    <input type="time" th:field="*{horaAbertura}" required><br><br>
+
+    <label>Hora de fechamento:</label><br>
+    <input type="time" th:field="*{horaFechamento}" required><br><br>
+
+    <label>Tempo médio de serviço (min):</label><br>
+    <input type="number" th:field="*{tempoMedioServico}" min="1"><br><br>
+
+    <h3>Recursos disponíveis:</h3>
+
+    <label><input type="checkbox" th:field="*{entregasAtivas}"> Faz entregas</label><br>
+    <label><input type="checkbox" th:field="*{catalogoAtivo}"> Possui catálogo</label><br>
+    <label><input type="checkbox" th:field="*{agendamentoAtivo}"> Permite agendamento</label><br>
+    <label><input type="checkbox" th:field="*{funcionariosAtivos}"> Possui funcionários</label><br>
+    <label><input type="checkbox" th:field="*{ativo}"> Negócio ativo</label><br><br>
+
+    <button type="submit">Salvar</button>
+    <a th:href="@{/negocios}">Cancelar</a>
+  </form>
+</body>
+</html>

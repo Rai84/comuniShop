@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalhes do Negócio</title>
+</head>
+<body>
+  <h1>Detalhes do Negócio</h1>
+
+  <p><strong>ID:</strong> <span th:text="${negocio.id}"></span></p>
+  <p><strong>Nome:</strong> <span th:text="${negocio.nome}"></span></p>
+  <p><strong>Descrição:</strong> <span th:text="${negocio.descricao}"></span></p>
+  <p><strong>Telefone Comercial:</strong> <span th:text="${negocio.telefoneComercial}"></span></p>
+  <p><strong>Email Comercial:</strong> <span th:text="${negocio.emailComercial}"></span></p>
+
+  <hr>
+
+  <h3>Horário de Funcionamento</h3>
+  <p><strong>Hora de Abertura:</strong> <span th:text="${negocio.horaAbertura}"></span></p>
+  <p><strong>Hora de Fechamento:</strong> <span th:text="${negocio.horaFechamento}"></span></p>
+  <p><strong>Tempo Médio de Serviço:</strong> <span th:text="${negocio.tempoMedioServico}"></span> minutos</p>
+
+  <hr>
+
+  <h3>Recursos Ativos</h3>
+  <p><strong>Entregas Ativas:</strong> <span th:text="${negocio.entregasAtivas} ? 'Sim' : 'Não'"></span></p>
+  <p><strong>Catálogo Ativo:</strong> <span th:text="${negocio.catalogoAtivo} ? 'Sim' : 'Não'"></span></p>
+  <p><strong>Agendamento Ativo:</strong> <span th:text="${negocio.agendamentoAtivo} ? 'Sim' : 'Não'"></span></p>
+  <p><strong>Funcionários Ativos:</strong> <span th:text="${negocio.funcionariosAtivos} ? 'Sim' : 'Não'"></span></p>
+
+  <hr>
+
+  <h3>Status</h3>
+  <p><strong>Negócio Ativo:</strong> <span th:text="${negocio.ativo} ? 'Sim' : 'Não'"></span></p>
+  <p><strong>Verificado:</strong> <span th:text="${negocio.verificado} ? 'Sim' : 'Não'"></span></p>
+
+  <hr>
+
+  <a th:href="@{/negocios/editar/{id}(id=${negocio.id})}">Editar</a> |
+  <a th:href="@{/negocios}">Voltar</a>
+</body>
+</html>

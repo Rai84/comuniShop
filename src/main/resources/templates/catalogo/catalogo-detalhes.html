@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Detalhes do Item</title>
+</head>
+<body>
+  <h1 th:text="${item.nome}"></h1>
+
+  <p><strong>ID:</strong> <span th:text="${item.id}"></span></p>
+  <p><strong>Negócio:</strong> <span th:text="${item.negocio.nome}"></span></p>
+  <p><strong>Descrição:</strong> <span th:text="${item.descricao}"></span></p>
+  <p><strong>Preço:</strong> R$ <span th:text="${#numbers.formatDecimal(item.preco, 1, 2)}"></span></p>
+  <p><strong>Disponível:</strong> <span th:text="${item.disponivel} ? 'Sim' : 'Não'"></span></p>
+  <p><strong>Criado em:</strong> <span th:text="${#temporals.format(item.criadoEm, 'dd/MM/yyyy HH:mm')}"></span></p>
+
+  <hr>
+
+  <h3>Imagens do Item</h3>
+  <div th:if="${#lists.isEmpty(imagens)}">
+    <p>Nenhuma imagem cadastrada.</p>
+  </div>
+  <div th:unless="${#lists.isEmpty(imagens)}">
+    <ul>
+      <li th:each="img : ${imagens}">
+        <img th:src="${img.url}" alt="Imagem" width="150"><br>
+        <span th:text="${img.principal} ? 'Imagem Principal' : 'Secundária'"></span>
+      </li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <a th:href="@{/catalogo/editar/{id}(id=${item.id})}">Editar</a> |
+  <a th:href="@{/catalogo}">Voltar</a>
+</body>
+</html>

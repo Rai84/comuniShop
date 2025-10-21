@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Catálogo de Itens</title>
+</head>
+<body>
+  <h1>Itens do Catálogo</h1>
+
+  <a th:href="@{/catalogo/novo}">Novo Item</a>
+  <br><br>
+
+  <table border="1" cellpadding="8">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Negócio</th>
+        <th>Nome</th>
+        <th>Descrição</th>
+        <th>Preço (R$)</th>
+        <th>Disponível</th>
+        <th>Data de Criação</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="item : ${itens}">
+        <td th:text="${item.id}"></td>
+        <td th:text="${item.negocio.nome}"></td>
+        <td th:text="${item.nome}"></td>
+        <td th:text="${item.descricao}"></td>
+        <td th:text="${#numbers.formatDecimal(item.preco, 1, 2)}"></td>
+        <td th:text="${item.disponivel} ? 'Sim' : 'Não'"></td>
+        <td th:text="${#temporals.format(item.criadoEm, 'dd/MM/yyyy HH:mm')}"></td>
+        <td>
+          <a th:href="@{/catalogo/{id}(id=${item.id})}">Ver</a> |
+          <a th:href="@{/catalogo/editar/{id}(id=${item.id})}">Editar</a> |
+          <a th:href="@{/catalogo/excluir/{id}(id=${item.id})}"
+             onclick="return confirm('Deseja realmente excluir este item?')">Excluir</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+</body>
+</html>
