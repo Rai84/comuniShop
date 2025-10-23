@@ -18,16 +18,17 @@ public class LoginController {
 
     @GetMapping({ "/", "/login" })
     public String index(Model model) {
+        model.addAttribute("usuario", new Usuario());
         return "index";
     }
 
-    @GetMapping("/home")
+    @GetMapping("/usuario/home")
     public String home(@AuthenticationPrincipal User user, Model model) {
         // busca o usuário logado pelo e-mail (username)
         Usuario usuario = usuarioRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         model.addAttribute("usuario", usuario);
-        return "home";
+        return "usuario/home";
     }
 }

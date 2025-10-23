@@ -35,9 +35,9 @@ public class RedirectController {
             case ESTOQUISTA:
                 return "redirect:/estoquista/painel";
             case CLIENTE:
-                return "redirect:/cliente/home";
+                return "redirect:/negocios";
             default:
-                return "redirect:/home";
+                return "redirect:/usuario/home";
         }
     }
 

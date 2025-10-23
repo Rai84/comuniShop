@@ -39,7 +39,7 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
         Usuario usuario = optUsuario.get();
 
         switch (usuario.getTipo()) {
-            case USUARIO -> response.sendRedirect("/home");
+            case USUARIO -> response.sendRedirect("/usuario/home");
             case ADMIN -> response.sendRedirect("/admin/painel");
             case ESTOQUISTA -> response.sendRedirect("/estoquista/painel");
             case CLIENTE -> response.sendRedirect("/cliente/home");

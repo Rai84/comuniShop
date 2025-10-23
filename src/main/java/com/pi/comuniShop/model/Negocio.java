@@ -13,9 +13,9 @@ public class Negocio {
     private Long id;
 
     @Column(nullable = false)
-    private String nome;
+    private String nome; // nome do negócio
 
-    @Column(columnDefinition = "TEXT")
+    private String cnpj;
     private String descricao;
 
     @Column(name = "telefone_comercial")
@@ -24,13 +24,8 @@ public class Negocio {
     @Column(name = "email_comercial")
     private String emailComercial;
 
-    @Column(name = "hora_abertura")
     private LocalTime horaAbertura = LocalTime.of(8, 0);
-
-    @Column(name = "hora_fechamento")
     private LocalTime horaFechamento = LocalTime.of(18, 0);
-
-    @Column(name = "tempo_medio_servico")
     private Integer tempoMedioServico = 30;
 
     private boolean entregasAtivas = false;
@@ -38,16 +33,19 @@ public class Negocio {
     private boolean agendamentoAtivo = false;
     private boolean funcionariosAtivos = false;
     private boolean ativo = true;
-
-    @Column(name = "verificado")
     private boolean verificado = false;
+
+    // Dono do negócio
+    @ManyToOne
+    @JoinColumn(name = "dono_id", nullable = false)
+    private Usuario dono;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PlanoTipo plano = PlanoTipo.FREE;
 
     @OneToMany(mappedBy = "negocio", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Catalogo> catalogos;
-
-    // Construtores
-    public Negocio() {
-    }
 
     // Getters e Setters
     public Long getId() {
@@ -64,6 +62,14 @@ public class Negocio {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(String cnpj) {
+        this.cnpj = cnpj;
     }
 
     public String getDescricao() {
@@ -160,5 +166,29 @@ public class Negocio {
 
     public void setVerificado(boolean verificado) {
         this.verificado = verificado;
+    }
+
+    public Usuario getDono() {
+        return dono;
+    }
+
+    public void setDono(Usuario dono) {
+        this.dono = dono;
+    }
+
+    public PlanoTipo getPlano() {
+        return plano;
+    }
+
+    public void setPlano(PlanoTipo plano) {
+        this.plano = plano;
+    }
+
+    public List<Catalogo> getCatalogos() {
+        return catalogos;
+    }
+
+    public void setCatalogos(List<Catalogo> catalogos) {
+        this.catalogos = catalogos;
     }
 }

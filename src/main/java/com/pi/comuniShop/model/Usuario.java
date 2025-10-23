@@ -1,7 +1,7 @@
 package com.pi.comuniShop.model;
 
 import jakarta.persistence.*;
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "usuario")
@@ -9,21 +9,15 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-
-    @Column(name = "criado_em", nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
-    private OffsetDateTime criadoEm;
-
-    @Column(name = "atualizado_em", columnDefinition = "TIMESTAMP NULL DEFAULT NULL")
-    private OffsetDateTime atualizadoEm;
+    private Long id;
 
     @Column(nullable = false)
     private String nome;
 
-    @Column(nullable = false, unique = true, length = 20)
+    @Column(nullable = false, unique = true)
     private String cpf;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String telefone;
 
     @Column(nullable = false, unique = true)
@@ -33,44 +27,22 @@ public class Usuario {
     private String senha;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "ENUM('CLIENTE', 'COMERCIANTE', 'ADMIN', 'ESTOQUISTA') DEFAULT 'CLIENTE'")
+    @Column(nullable = false)
     private TipoUsuario tipo = TipoUsuario.CLIENTE;
 
-    // ================== Hooks ==================
-    @PrePersist
-    protected void onCreate() {
-        criadoEm = OffsetDateTime.now();
-        atualizadoEm = criadoEm;
-    }
+    @Column(name = "criado_em", nullable = false)
+    private LocalDateTime criadoEm = LocalDateTime.now();
 
-    @PreUpdate
-    protected void onUpdate() {
-        atualizadoEm = OffsetDateTime.now();
-    }
+    @Column(name = "atualizado_em")
+    private LocalDateTime atualizadoEm;
 
-    // ================== Getters e Setters ==================
-    public Integer getId() {
+    // Getters e Setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public OffsetDateTime getCriadoEm() {
-        return criadoEm;
-    }
-
-    public void setCriadoEm(OffsetDateTime criadoEm) {
-        this.criadoEm = criadoEm;
-    }
-
-    public OffsetDateTime getAtualizadoEm() {
-        return atualizadoEm;
-    }
-
-    public void setAtualizadoEm(OffsetDateTime atualizadoEm) {
-        this.atualizadoEm = atualizadoEm;
     }
 
     public String getNome() {
@@ -119,5 +91,21 @@ public class Usuario {
 
     public void setTipo(TipoUsuario tipo) {
         this.tipo = tipo;
+    }
+
+    public LocalDateTime getCriadoEm() {
+        return criadoEm;
+    }
+
+    public void setCriadoEm(LocalDateTime criadoEm) {
+        this.criadoEm = criadoEm;
+    }
+
+    public LocalDateTime getAtualizadoEm() {
+        return atualizadoEm;
+    }
+
+    public void setAtualizadoEm(LocalDateTime atualizadoEm) {
+        this.atualizadoEm = atualizadoEm;
     }
 }

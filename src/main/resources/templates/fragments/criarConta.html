@@ -1,68 +1,104 @@
 <!-- templates/fragments/criarContaFragment.html -->
 <div th:fragment="criarContaFragment">
-    <div id="criarContaModal" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
-        <div class="relative w-full max-w-md p-8 bg-white shadow-xl rounded-2xl">
-        <!-- Botão Fechar -->
-        <button id="closeModalBtn" class="absolute text-xl text-gray-400 top-3 right-3 hover:text-gray-600">&times;</button>
+  <div id="criarContaModal"
+       class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
+    <div class="relative w-full max-w-md p-8 bg-white shadow-xl rounded-2xl">
 
-        <!-- Título -->
-        <h2 class="mb-6 text-2xl font-bold text-center text-gray-800 font-sour">
-          Criar Conta
-        </h2>
+      <!-- Botão Fechar -->
+      <button id="closeModalBtn" class="absolute text-xl text-gray-500 top-3 right-3 hover:text-gray-700">&times;</button>
 
-        <!-- Tipo de conta -->
-        <div class="flex justify-center mb-6">
-          <button id="btnCliente" class="px-4 py-2 text-white bg-blue-500 border border-gray-300 rounded-l-lg hover:bg-blue-600">
-            Cliente
-          </button>
-          <button id="btnNegocio" class="px-4 py-2 bg-gray-100 border border-gray-300 rounded-r-lg hover:bg-gray-200">
-            Negócio
-          </button>
+      <!-- Título -->
+      <h2 class="mb-6 text-2xl font-bold text-center text-gray-800 font-sour">
+        Criar Conta
+      </h2>
+
+      <!-- Tipo de conta -->
+      <div class="flex justify-center mb-6">
+        <button id="btnCliente" type="button"
+                class="px-4 py-2 text-white bg-blue-600 rounded-l-lg">
+          usuario
+        </button>
+        <button id="btnNegocio" type="button"
+                class="px-4 py-2 bg-gray-200 rounded-r-lg">
+          Negócio
+        </button>
+      </div>
+
+      <!-- ================= FORM CLIENTE ================= -->
+      <form id="formCliente" th:action="@{/usuarios/salvar}" method="post" class="space-y-3">
+        <input type="hidden" name="tipo" value="USUARIO"/>
+
+        <div>
+          <label>Nome completo</label>
+          <input type="text" name="nome" required class="w-full p-2 border rounded">
         </div>
-        
-        <!-- Formulário Cliente -->
-        <form id="formCliente" th:action="@{/clientes/salvar}" method="post" class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Nome completo</label>
-            <input type="text" name="nome" required class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">E-mail</label>
-            <input type="email" name="email" required class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Senha</label>
-            <input type="password" name="senha" required minlength="6" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-          </div>
-          <button type="submit" class="w-full py-2 text-white transition bg-blue-500 rounded-lg hover:bg-blue-600">
-            Criar conta como Cliente
-          </button>
-        </form>
-    
-        <!-- Formulário Negócio -->
-        <form id="formNegocio" th:action="@{/negocios/salvar}" method="post" class="hidden space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Nome do negócio</label>
-            <input type="text" name="nomeNegocio" required class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">CNPJ (opcional)</label>
-            <input type="text" name="cnpj" placeholder="00.000.000/0000-00" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">E-mail comercial</label>
-            <input type="email" name="email" required class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-          </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Senha</label>
-            <input type="password" name="senha" required minlength="6" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-200">
-          </div>
-          <button type="submit" class="w-full py-2 text-white transition bg-green-500 rounded-lg hover:bg-green-600">
-            Criar conta de Negócio
-          </button>
-        </form>
+        <div>
+          <label>CPF</label>
+          <input type="text" name="cpf" placeholder="000.000.000-00" required class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label>Telefone</label>
+          <input type="text" name="telefone" placeholder="(11) 99999-9999" required class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label>E-mail</label>
+          <input type="email" name="email" required class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label>Senha</label>
+          <input type="password" name="senha" required minlength="6" class="w-full p-2 border rounded">
+        </div>
+
+        <button type="submit" class="w-full py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
+          Criar conta de Cliente
+        </button>
+      </form>
+
+      <!-- ================= FORM NEGÓCIO ================= -->
+      <form id="formNegocio" th:action="@{/negocios/salvar}" method="post" class="hidden space-y-3">
+        <input type="hidden" name="tipo" value="COMERCIANTE"/>
+
+        <div>
+          <label>Nome do dono</label>
+          <input type="text" name="nome" required class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label>CPF</label>
+          <input type="text" name="cpf" placeholder="000.000.000-00" required class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label>Telefone</label>
+          <input type="text" name="telefone" placeholder="(11) 99999-9999" required class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label>E-mail comercial</label>
+          <input type="email" name="email" required class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label>Senha</label>
+          <input type="password" name="senha" required minlength="6" class="w-full p-2 border rounded">
+        </div>
+
+        <hr>
+
+        <div>
+          <label>Nome do negócio</label>
+          <input type="text" name="nomeNegocio" required class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label>CNPJ (opcional)</label>
+          <input type="text" name="cnpj" placeholder="00.000.000/0000-00" class="w-full p-2 border rounded">
+        </div>
+
+        <button type="submit" class="w-full py-2 text-white bg-green-600 rounded hover:bg-green-700">
+          Criar conta de Negócio
+        </button>
+      </form>
+
     </div>
-  
+  </div>
+
+  <!-- Script para alternar os formulários -->
   <script>
     const btnCliente = document.getElementById("btnCliente");
     const btnNegocio = document.getElementById("btnNegocio");
@@ -73,15 +109,15 @@
     btnCliente.addEventListener("click", () => {
       formCliente.classList.remove("hidden");
       formNegocio.classList.add("hidden");
-      btnCliente.classList.add("bg-blue-500", "text-white");
-      btnNegocio.classList.remove("bg-green-500", "text-white");
+      btnCliente.classList.add("bg-blue-600", "text-white");
+      btnNegocio.classList.remove("bg-green-600", "text-white");
     });
 
     btnNegocio.addEventListener("click", () => {
       formNegocio.classList.remove("hidden");
       formCliente.classList.add("hidden");
-      btnNegocio.classList.add("bg-green-500", "text-white");
-      btnCliente.classList.remove("bg-blue-500", "text-white");
+      btnNegocio.classList.add("bg-green-600", "text-white");
+      btnCliente.classList.remove("bg-blue-600", "text-white");
     });
 
     closeModalBtn.addEventListener("click", () => {
