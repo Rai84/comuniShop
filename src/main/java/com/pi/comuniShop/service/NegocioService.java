@@ -1,6 +1,7 @@
 package com.pi.comuniShop.service;
 
 import com.pi.comuniShop.model.Negocio;
+import com.pi.comuniShop.model.Usuario;
 import com.pi.comuniShop.repository.NegocioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,11 @@ public class NegocioService {
     // 🔹 Buscar por ID
     public Negocio buscarPorId(Long id) {
         return negocioRepository.findById(id).orElse(null);
+    }
+
+    // 🔹 Buscar por dono
+    public Negocio buscarPorDono(Usuario dono) {
+        return negocioRepository.findByDono(dono);
     }
 
     // 🔹 Excluir

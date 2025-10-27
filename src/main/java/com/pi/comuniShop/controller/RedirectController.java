@@ -7,8 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.pi.comuniShop.model.Negocio;
 import com.pi.comuniShop.model.Usuario;
 import com.pi.comuniShop.repository.UsuarioRepository;
+import com.pi.comuniShop.repository.NegocioRepository;
 
 @Controller
 public class RedirectController {
@@ -16,7 +18,9 @@ public class RedirectController {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    // Após o login, o Spring redireciona para /redirect
+    @Autowired
+    private NegocioRepository negocioRepository;
+
     @GetMapping("/redirect")
     public String redirect(@AuthenticationPrincipal User user, Model model) {
         if (user == null) {
@@ -28,19 +32,24 @@ public class RedirectController {
 
         model.addAttribute("usuario", usuario);
 
-        // Redireciona conforme o tipo do usuário
         switch (usuario.getTipo()) {
             case ADMIN:
                 return "redirect:/admin/painel";
+
             case ESTOQUISTA:
                 return "redirect:/estoquista/painel";
+
             case CLIENTE:
-                return "redirect:/negocios";
+                Negocio negocio = negocioRepository.findByDono(usuario);
+                if (negocio != null) {
+                    return "redirect:/negocios/" + negocio.getId();
+                }
+                return "redirect:/cliente/home";
+
             default:
                 return "redirect:/usuario/home";
         }
     }
-
     // Painel do ADMIN
     @GetMapping("/admin/painel")
     public String painelAdmin(@AuthenticationPrincipal User user, Model model) {

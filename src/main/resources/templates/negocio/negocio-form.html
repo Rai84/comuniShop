@@ -7,7 +7,9 @@
 <body>
   <h1 th:text="${negocio.id == null} ? 'Novo Negócio' : 'Editar Negócio'"></h1>
 
-  <form th:action="@{/negocios/salvar}" th:object="${negocio}" method="post">
+  <form th:action="@{/negocios/{id}/atualizar(id=${negocio.id})}" 
+    th:object="${negocio}"
+    method="post">
     <input type="hidden" th:field="*{id}">
 
     <label>Nome:</label><br>
