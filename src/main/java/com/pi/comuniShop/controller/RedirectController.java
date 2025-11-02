@@ -76,4 +76,6 @@ public class RedirectController {
         model.addAttribute("usuario", usuario);
         return "cliente/home";
     }
+
+    
 }

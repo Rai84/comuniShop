@@ -1,8 +1,10 @@
 package com.pi.comuniShop.controller;
 
+import com.pi.comuniShop.model.Catalogo;
 import com.pi.comuniShop.model.Negocio;
 import com.pi.comuniShop.model.Usuario;
 import com.pi.comuniShop.model.TipoUsuario;
+import com.pi.comuniShop.service.CatalogoService;
 import com.pi.comuniShop.service.NegocioService;
 import com.pi.comuniShop.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +31,9 @@ public class NegocioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private CatalogoService catalogoService;
 
     // ✅ Criar Negócio + Dono (modal)
     @PostMapping("/salvar")
@@ -75,7 +83,14 @@ public class NegocioController {
             return "redirect:/negocios";
         }
 
+        List<Catalogo> itens = catalogoService.listarPorNegocio(negocio.getId());
+
         model.addAttribute("negocio", negocio);
+        model.addAttribute("itens", itens);
+
+        System.out.println("Produtos do negócio " + negocio.getId() + ": " + itens.size());
+        itens.forEach(item -> System.out.println(" - " + item.getNome()));
+
         return "negocio/negocio-detalhes"; // painel
     }
 

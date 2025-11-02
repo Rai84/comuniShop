@@ -33,4 +33,8 @@ public class CatalogoService {
     public Catalogo salvarSomenteCatalogo(Catalogo catalogo) {
         return catalogoRepository.save(catalogo);
     }
+
+    public List<Catalogo> listarPorNegocio(Long negocioId) {
+        return catalogoRepository.findByNegocioId(negocioId);
+    }
 }

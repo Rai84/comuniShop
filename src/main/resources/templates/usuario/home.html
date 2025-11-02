@@ -3,7 +3,7 @@
 <head th:replace="~{fragments/head :: headFragment('Home')}"></head>
 
 <body class="text-gray-900 bg-gray-100">
-  <div th:replace="~{fragments/menuHome :: menuFragment}"></div>
+  <div th:replace="~{fragments/menuHome :: menuFragment}" class="fixed"></div>
 
   <!-- BARRA LATERAL -->
   <nav class="w-8 h-[calc(100vh-40px)] bg-gray-600 fixed flex items-center justify-between flex-col">
@@ -47,6 +47,7 @@
     </div>
   </div>
 
+  <!-- Dados do usuário logado -->
   <div class="max-w-3xl p-6 mx-auto mt-10 bg-white rounded-lg shadow">
     <h1 class="mb-4 text-2xl font-bold text-gray-900">
       Bem-vindo, <span th:text="${usuario.nome}">Usuário</span>!
@@ -62,6 +63,46 @@
       </a>
     </div>
   </div>
+
+  <!-- Produtos Disponíveis: -->
+  <h1 style="text-align:center; margin: 20px 0;">🛍️ Todos os Produtos</h1>
+
+  <div class="grid" th:if="${#lists.isEmpty(produtos)}">
+    <p>Nenhum produto disponível no momento.</p>
+  </div>
+
+  <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 bg-gray-50"
+     th:unless="${#lists.isEmpty(produtos)}">
+
+  <div th:each="p : ${produtos}"
+       class="flex flex-col justify-between overflow-hidden transition-shadow duration-300 bg-white shadow-md rounded-2xl hover:shadow-xl">
+    
+    <!-- Imagem -->
+    <a th:href="@{/catalogo/{id}(id=${p.id})}" class="block overflow-hidden">
+      <img th:src="${#lists.isEmpty(p.imagens) ? '/img/no-image.png' : p.imagens[0].url}"
+           alt="Imagem do produto"
+           class="object-cover w-full h-48 transition-transform duration-300 hover:scale-105">
+    </a>
+
+    <!-- Conteúdo -->
+    <div class="flex flex-col flex-grow p-4">
+      <h3 th:text="${p.nome}" class="mb-1 text-lg font-semibold text-gray-900 truncate"></h3>
+      <p th:text="${p.descricao}" class="mb-2 text-sm text-gray-600 line-clamp-2"></p>
+      
+      <div class="mt-auto">
+        <p class="font-semibold text-gray-700">
+          R$ <span th:text="${#numbers.formatDecimal(p.preco, 1, 2)}"></span>
+        </p>
+        <p th:text="'Negócio: ' + ${p.negocio.nome}" class="mb-3 text-xs text-gray-500"></p>
+
+        <a th:href="@{/catalogo/{id}(id=${p.id})}"
+           class="inline-block w-full py-2 text-sm font-medium text-center text-white transition-colors duration-300 rounded-lg bg-emerald-500 hover:bg-emerald-600">
+          Ver Detalhes
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- SCRIPT DE CONFIGURAÇÃO -->
   <script>

@@ -43,6 +43,22 @@ public class CatalogoController {
         return "catalogo/catalogo-form";
     }
 
+    // ===== NOVO PRODUTO COM NEGÓCIO PRÉ-SELECIONADO =====
+    @GetMapping("/novo/{negocioId}")
+    public String novoComNegocio(@PathVariable Long negocioId, Model model) {
+        var negocio = negocioService.buscarPorId(negocioId);
+        if (negocio == null) {
+            return "redirect:/negocios";
+        }
+
+        Catalogo novo = new Catalogo();
+        novo.setNegocio(negocio);
+
+        model.addAttribute("item", novo);
+        model.addAttribute("negocioSelecionado", negocio);
+        return "catalogo/catalogo-form";
+    }
+
     // ==================== SALVAR ====================
     @PostMapping("/salvar")
     public String salvar(
@@ -54,7 +70,7 @@ public class CatalogoController {
         if (item.getId() != null) {
             Catalogo existente = catalogoService.buscarPorId(item.getId());
             if (existente == null)
-                return "redirect:/catalogo";
+                return "redirect:/negocios";
 
             // ✅ Mantém o negócio existente caso o campo venha vazio no form
             if (item.getNegocio() == null || item.getNegocio().getId() == null) {
@@ -72,7 +88,7 @@ public class CatalogoController {
         } else {
             // ✅ Garante que o negócio não está nulo no cadastro novo
             if (item.getNegocio() == null || item.getNegocio().getId() == null) {
-                return "redirect:/catalogo/novo?erro=negocio";
+                return "redirect:/negocios";
             }
             salvo = catalogoService.salvarSomenteCatalogo(item);
         }
@@ -82,7 +98,8 @@ public class CatalogoController {
             imagemCatalogoService.salvarArquivos(files, salvo.getId());
         }
 
-        return "redirect:/catalogo";
+        // ✅ Redireciona para o painel do negócio
+        return "redirect:/negocios/" + salvo.getNegocio().getId();
     }
 
     // ==================== EDITAR ====================
@@ -90,12 +107,10 @@ public class CatalogoController {
     public String editar(@PathVariable Long id, Model model) {
         Catalogo item = catalogoService.buscarPorId(id);
         if (item == null)
-            return "redirect:/catalogo";
+            return "redirect:/negocios";
 
         model.addAttribute("item", item);
         model.addAttribute("negocios", negocioService.listarTodos());
-
-        // 👇 Aqui entra a ordenação por ordem
         model.addAttribute("imagens", imagemCatalogoService
                 .listarPorCatalogo(id)
                 .stream()
@@ -111,17 +126,23 @@ public class CatalogoController {
         ImagemCatalogo img = imagemCatalogoService.buscarPorId(id);
         if (img != null) {
             Long catalogoId = img.getCatalogo().getId();
+            Long negocioId = img.getCatalogo().getNegocio().getId();
             imagemCatalogoService.definirComoPrincipal(id, catalogoId);
-            return "redirect:/catalogo/editar/" + catalogoId;
+            return "redirect:/negocios/" + negocioId;
         }
-        return "redirect:/catalogo";
+        return "redirect:/negocios";
     }
 
     // ==================== EXCLUIR ITEM ====================
     @GetMapping("/excluir/{id}")
     public String excluir(@PathVariable Long id) {
-        catalogoService.excluir(id);
-        return "redirect:/catalogo";
+        Catalogo item = catalogoService.buscarPorId(id);
+        if (item != null && item.getNegocio() != null) {
+            Long negocioId = item.getNegocio().getId();
+            catalogoService.excluir(id);
+            return "redirect:/negocios/" + negocioId;
+        }
+        return "redirect:/negocios";
     }
 
     // ==================== EXCLUIR IMAGEM ====================
@@ -129,11 +150,11 @@ public class CatalogoController {
     public String excluirImagem(@PathVariable Long id) {
         ImagemCatalogo img = imagemCatalogoService.buscarPorId(id);
         if (img != null) {
-            Long catalogoId = img.getCatalogo().getId();
+            Long negocioId = img.getCatalogo().getNegocio().getId();
             imagemCatalogoService.excluir(id);
-            return "redirect:/catalogo/editar/" + catalogoId;
+            return "redirect:/negocios/" + negocioId;
         }
-        return "redirect:/catalogo";
+        return "redirect:/negocios";
     }
 
     // ==================== DETALHES ====================
@@ -141,9 +162,8 @@ public class CatalogoController {
     public String detalhes(@PathVariable Long id, Model model) {
         Catalogo item = catalogoService.buscarPorId(id);
         if (item == null)
-            return "redirect:/catalogo";
+            return "redirect:/negocios";
 
-        // 🔢 Ordena as imagens antes de enviar pro template
         List<ImagemCatalogo> imagens = imagemCatalogoService.listarPorCatalogo(id)
                 .stream()
                 .sorted(Comparator.comparing(ImagemCatalogo::getOrdem))
@@ -152,27 +172,29 @@ public class CatalogoController {
         model.addAttribute("item", item);
         model.addAttribute("imagens", imagens);
 
-        return "catalogo/catalogo-detalhes";
+        Long negocioId = item.getNegocio().getId();
+        return "redirect:/negocios/" + negocioId;
     }
 
+    // ==================== MOVER IMAGEM PARA CIMA ====================
     @GetMapping("/imagem/mover/{id}/up")
     public String moverImagemCima(@PathVariable Long id) {
         ImagemCatalogo img = imagemCatalogoService.buscarPorId(id);
         if (img != null) {
             imagemCatalogoService.moverImagem(id, "up");
-            return "redirect:/catalogo/editar/" + img.getCatalogo().getId();
+            return "redirect:/negocios/" + img.getCatalogo().getNegocio().getId();
         }
-        return "redirect:/catalogo";
+        return "redirect:/negocios";
     }
 
+    // ==================== MOVER IMAGEM PARA BAIXO ====================
     @GetMapping("/imagem/mover/{id}/down")
     public String moverImagemBaixo(@PathVariable Long id) {
         ImagemCatalogo img = imagemCatalogoService.buscarPorId(id);
         if (img != null) {
             imagemCatalogoService.moverImagem(id, "down");
-            return "redirect:/catalogo/editar/" + img.getCatalogo().getId();
+            return "redirect:/negocios/" + img.getCatalogo().getNegocio().getId();
         }
-        return "redirect:/catalogo";
+        return "redirect:/negocios";
     }
-
 }

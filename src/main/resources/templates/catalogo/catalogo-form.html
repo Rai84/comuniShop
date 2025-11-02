@@ -9,17 +9,10 @@
 
   <form th:action="@{/catalogo/salvar}" th:object="${item}" method="post" enctype="multipart/form-data">
     <input type="hidden" th:field="*{id}">
-
-    <!-- Campos do item -->
-    <label>Negócio:</label><br>
-    <select th:field="*{negocio.id}" required>
-      <option value="">-- Selecione --</option>
-      <option th:each="n : ${negocios}" th:value="${n.id}" th:text="${n.nome}"></option>
-    </select><br><br>
+    <input type="hidden" th:field="*{negocio.id}">
 
     <label>Nome:</label><br>
-<input type="text" th:field="*{nome}" required><br><br>
-
+    <input type="text" th:field="*{nome}" required><br><br>
 
     <label>Descrição:</label><br>
     <textarea th:field="*{descricao}" rows="3"></textarea><br><br>

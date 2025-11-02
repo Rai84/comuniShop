@@ -1,11 +1,14 @@
 package com.pi.comuniShop.controller;
 
 import com.pi.comuniShop.model.Usuario;
+import com.pi.comuniShop.service.CatalogoService;
 import com.pi.comuniShop.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+
 
 @Controller
 @RequestMapping("/usuarios")
@@ -13,6 +16,9 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
+
+    @Autowired
+    private CatalogoService catalogoService;
 
     @GetMapping
     public String listar(Model model) {
@@ -48,4 +54,8 @@ public class UsuarioController {
         usuarioService.excluir(id);
         return "redirect:/usuarios";
     }
+
+    
+
+    
 }
