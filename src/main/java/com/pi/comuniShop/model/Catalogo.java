@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.Collate;
+
 @Entity
 @Table(name = "catalogo")
 public class Catalogo {
@@ -25,6 +27,9 @@ public class Catalogo {
 
     @Column(precision = 10, scale = 2)
     private BigDecimal preco;
+
+    @Column(name = "duracao_minutos", nullable = true)
+    private Integer duracaoMinutos;
 
     @Column(nullable = false)
     private boolean disponivel = true;
@@ -77,6 +82,14 @@ public class Catalogo {
 
     public void setPreco(BigDecimal preco) {
         this.preco = preco;
+    }
+
+    public Integer getDuracaoMinutos() {
+        return duracaoMinutos;
+    }
+
+    public void setDuracaoMinutos(Integer duracaoMinutos) {
+        this.duracaoMinutos = duracaoMinutos;
     }
 
     public boolean isDisponivel() {

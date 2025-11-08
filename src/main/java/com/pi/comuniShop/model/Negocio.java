@@ -26,7 +26,6 @@ public class Negocio {
 
     private LocalTime horaAbertura = LocalTime.of(8, 0);
     private LocalTime horaFechamento = LocalTime.of(18, 0);
-    private Integer tempoMedioServico = 30;
 
     private boolean entregasAtivas = false;
     private boolean catalogoAtivo = true;
@@ -110,14 +109,6 @@ public class Negocio {
 
     public void setHoraFechamento(LocalTime horaFechamento) {
         this.horaFechamento = horaFechamento;
-    }
-
-    public Integer getTempoMedioServico() {
-        return tempoMedioServico;
-    }
-
-    public void setTempoMedioServico(Integer tempoMedioServico) {
-        this.tempoMedioServico = tempoMedioServico;
     }
 
     public boolean isEntregasAtivas() {

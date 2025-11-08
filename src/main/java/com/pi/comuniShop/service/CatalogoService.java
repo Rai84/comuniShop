@@ -1,6 +1,7 @@
 package com.pi.comuniShop.service;
 
 import com.pi.comuniShop.model.Catalogo;
+import com.pi.comuniShop.model.Negocio;
 import com.pi.comuniShop.repository.CatalogoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,11 @@ public class CatalogoService {
     }
 
     public Catalogo salvar(Catalogo catalogo) {
+        Negocio negocio = catalogo.getNegocio();
+        if (negocio != null && !negocio.isAgendamentoAtivo()) {
+            catalogo.setDuracaoMinutos(null);
+        }
+
         return catalogoRepository.save(catalogo);
     }
 

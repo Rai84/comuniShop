@@ -5,7 +5,9 @@
 <body class="px-4 ml-40 text-black">
   <nav id="menu1" class="fixed top-0 left-0 flex flex-col items-start w-40 h-full px-4 py-6 text-white bg-zinc-600">
     <a class="cursor-pointer"><strong>Plano: </strong><span th:text="${negocio.plano}"></span></a>
-    <a th:href="@{/catalogo/novo/{id}(id=${negocio.id})}"><i class="bi bi-plus-circle"></i> Criar Produto</a>
+    <button data-modal-target="modalNovoProduto" data-modal-toggle="modalNovoProduto">
+      <i class="bi bi-plus-circle"></i> Novo Produto
+    </button>
     <button data-modal-target="modalChat" data-modal-toggle="modalChat"><i class="bi bi-chat-left-text"></i> Chat</button>
     <a th:href="@{/logout}"><i class="bi bi-box-arrow-left"></i> Sair</a>
   </nav>
@@ -23,7 +25,7 @@
     </div>
   </nav>
 
-  <div class="absolute p-4 mt-10 rounded-lg shadow-lg left-44 right-[45rem] bg-zinc-600 text-white">
+  <div class="absolute p-4 mt-10 rounded-lg shadow-lg left-44 right-[23rem] bg-zinc-600 text-white">
     <div class="flex items-center justify-between mb-4">
       <h1 class="text-xl font-semibold">Catálogo</h1>
       <button data-modal-target="modalNovoProduto" data-modal-toggle="modalNovoProduto"
@@ -39,6 +41,7 @@
             <th class="px-4 py-3">Produto</th>
             <th class="px-4 py-3">Descrição</th>
             <th class="px-4 py-3">Preço (R$)</th>
+            <th class="px-4 py-3 text-center">Duração (minutos)</th>
             <th class="px-4 py-3 text-center">Disponível</th>
             <th class="px-4 py-3 text-center">Ações</th>
           </tr>
@@ -49,6 +52,7 @@
             <td class="px-4 py-3 font-semibold" th:text="${p.nome}"></td>
             <td class="px-4 py-3 truncate max-w-[200px]" th:text="${p.descricao}"></td>
             <td class="px-4 py-3" th:text="${#numbers.formatDecimal(p.preco, 1, 2)}"></td>
+            <td class="px-4 py-3 text-center" th:text="${p.duracaoMinutos != null} ? ${p.duracaoMinutos} : '—'"></td>
             <td class="px-4 py-3 text-center">
               <span th:text="${p.disponivel} ? 'Sim' : 'Não'" 
                     th:classappend="${p.disponivel} ? 'text-green-400' : 'text-red-400'"></span>
@@ -56,7 +60,7 @@
             <td class="px-4 py-3 space-x-2 text-center">
               <a th:data-modal-target="'modalEditarProduto_' + ${p.id}" 
                 th:data-modal-toggle="'modalEditarProduto_' + ${p.id}"
-                class="px-2 py-1 text-blue-400 rounded hover:underline">
+                class="px-2 py-1 text-blue-400 rounded cursor-pointer hover:underline">
                 Editar
               </a>
               <a th:href="@{/catalogo/excluir/{id}(id=${p.id})}" 
@@ -65,7 +69,7 @@
               </a>
               <a th:data-modal-target="'modalVerProduto_' + ${p.id}" 
                 th:data-modal-toggle="'modalVerProduto_' + ${p.id}"
-                class="px-2 py-1 rounded text-amber-400 hover:underline">
+                class="px-2 py-1 rounded cursor-pointer text-amber-400 hover:underline">
                 Ver
               </a>
               
@@ -80,12 +84,11 @@
   </div>
 
 
-  <div class="absolute flex gap-6 mt-10 right-5">
+  <div class="absolute flex flex-col gap-6 mt-10 right-5">
     <div class="flex flex-col items-center justify-center h-40 text-white rounded-lg shadow-lg w-80 bg-zinc-600">
       <h3>Horário de Funcionamento</h3>
       <p><strong>Hora de Abertura:</strong> <span id="horaAbertura" th:text="${negocio.horaAbertura}"></span></p>
       <p><strong>Hora de Fechamento:</strong> <span id="horaFechamento" th:text="${negocio.horaFechamento}"></span></p>
-      <p><strong>Tempo Médio de Serviço:</strong> <span th:text="${negocio.tempoMedioServico}"></span> minutos</p>
     </div>
 
     <div class="flex flex-col items-center justify-center h-40 text-white rounded-lg shadow-lg w-80 bg-zinc-600">
@@ -93,7 +96,15 @@
       <p><strong>Entregas Ativas:</strong> <span th:text="${negocio.entregasAtivas} ? 'Sim' : 'Não'"></span></p>
       <p><strong>Catálogo Ativo:</strong> <span th:text="${negocio.catalogoAtivo} ? 'Sim' : 'Não'"></span></p>
       <p><strong>Agendamento Ativo:</strong> <span th:text="${negocio.agendamentoAtivo} ? 'Sim' : 'Não'"></span></p>
-      <p><strong>Funcionários Ativos:</strong> <span th:text="${negocio.funcionariosAtivos} ? 'Sim' : 'Não'"></span></p>
+    </div>
+
+    <div class="flex flex-col items-center justify-center h-40 text-white rounded-lg shadow-lg w-80 bg-zinc-600">
+      <h3>Endereço <i class="bi bi-geo-alt-fill"></i></h3>
+      <!-- <p><strong>Rua:</strong> <span th:text="${negocio.endereco.rua}"></span></p>
+      <p><strong>Número:</strong> <span th:text="${negocio.endereco.numero}"></span></p>
+      <p><strong>Bairro:</strong> <span th:text="${negocio.endereco.bairro}"></span></p>
+      <p><strong>Cidade:</strong> <span th:text="${negocio.endereco.cidade}"></span></p>
+      <p><strong>Estado:</strong> <span th:text="${negocio.endereco.estado}"></span></p> -->
     </div>
   </div>
   
@@ -197,6 +208,16 @@
           <input type="number" name="preco" step="0.01" min="0" required 
                  class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
         </div>
+
+        <div th:if="${negocio.agendamentoAtivo}">
+  <label for="duracao" class="block text-sm font-medium text-gray-700 mb-1">
+    Duração (minutos)
+  </label>
+  <input type="number" id="duracao" name="duracaoMinutos" min="5" step="5"
+         class="border rounded-lg p-2 w-full focus:ring-emerald-500 focus:border-emerald-500"
+         placeholder="Ex: 30">
+</div>
+
 
         <!-- Upload de imagens -->
         <div>
@@ -346,6 +367,8 @@
       <div class="space-y-3 text-gray-800">
         <p><strong>Descrição:</strong> <span th:text="${p.descricao}"></span></p>
         <p><strong>Preço:</strong> R$ <span th:text="${#numbers.formatDecimal(p.preco, 1, 2)}"></span></p>
+        <p><strong>Duração:</strong> 
+          <span th:text="${p.duracaoMinutos != null} ? ${p.duracaoMinutos + ' minutos'} : '—'"></span>
         <p>
           <strong>Status:</strong>
           <span th:text="${p.disponivel} ? 'Disponível' : 'Indisponível'" 

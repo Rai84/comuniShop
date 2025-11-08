@@ -121,7 +121,6 @@ public class NegocioController {
         negocio.setTelefoneComercial(dados.getTelefoneComercial());
         negocio.setHoraAbertura(dados.getHoraAbertura());
         negocio.setHoraFechamento(dados.getHoraFechamento());
-        negocio.setTempoMedioServico(dados.getTempoMedioServico());
         negocio.setCatalogoAtivo(dados.isCatalogoAtivo());
         negocio.setAgendamentoAtivo(dados.isAgendamentoAtivo());
         negocio.setEntregasAtivas(dados.isEntregasAtivas());
