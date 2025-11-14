@@ -68,6 +68,12 @@ public class Negocio {
     @Column(nullable = false)
     private String numero;
 
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
     private String complemento;
 
     // ============================
@@ -256,6 +262,22 @@ public class Negocio {
 
     public void setNumero(String numero) {
         this.numero = numero;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public String getComplemento() {

@@ -58,6 +58,12 @@ public class Usuario {
     @Column(nullable = true)
     private String numero;
 
+    @Column
+    private Double latitude;
+
+    @Column
+    private Double longitude;
+
     private String complemento; // opcional
 
     // Getters e Setters
@@ -180,6 +186,22 @@ public class Usuario {
 
     public void setNumero(String numero) {
         this.numero = numero;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public String getComplemento() {

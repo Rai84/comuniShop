@@ -5,7 +5,9 @@ import com.pi.comuniShop.model.Usuario;
 import com.pi.comuniShop.repository.NegocioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class NegocioService {
@@ -13,11 +15,27 @@ public class NegocioService {
     @Autowired
     private NegocioRepository negocioRepository;
 
+    @Autowired
+    private GeoService geoService;
+
     // 🔹 Salvar ou atualizar um negócio
     public Negocio salvar(Negocio negocio) {
+
         if (negocio.getDono() == null) {
             throw new IllegalArgumentException("O negócio precisa ter um dono vinculado.");
         }
+
+        // Se tiver CEP → buscar lat/long
+        if (negocio.getCep() != null && !negocio.getCep().isEmpty()) {
+
+            Map<String, Double> coords = geoService.buscarLatLongPorCep(negocio.getCep());
+
+            if (coords != null) {
+                negocio.setLatitude(coords.get("lat"));
+                negocio.setLongitude(coords.get("lon"));
+            }
+        }
+
         return negocioRepository.save(negocio);
     }
 

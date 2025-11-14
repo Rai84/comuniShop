@@ -9,6 +9,10 @@
       <i class="bi bi-plus-circle"></i> Novo Produto
     </button>
     <button data-modal-target="modalChat" data-modal-toggle="modalChat"><i class="bi bi-chat-left-text"></i> Chat</button>
+    <button data-modal-target="modalMapa" data-modal-toggle="modalMapa">
+  <i class="bi bi-map"></i> Ver Mapa
+</button>
+
     <a th:href="@{/logout}"><i class="bi bi-box-arrow-left"></i> Sair</a>
   </nav>
 
@@ -109,6 +113,10 @@
       <p class="text-sm"><strong>Bairro:</strong> <span th:text="${negocio.bairro}"></span></p>
       <p class="text-sm"><strong>Cidade:</strong> <span th:text="${negocio.cidade}"></span></p>
       <p class="text-sm"><strong>Estado:</strong> <span th:text="${negocio.estado}"></span></p>
+
+      <!-- NOVO -->
+    <p><strong>Latitude:</strong> <span th:text="${negocio.latitude}"></span></p>
+    <p><strong>Longitude:</strong> <span th:text="${negocio.longitude}"></span></p>
     </div>
 
   </div>
@@ -414,7 +422,39 @@
     </div>
   </div>
 
+  <!-- ====================== MODAL MAPA ====================== -->
+  <div id="modalMapa" tabindex="-1" aria-hidden="true"
+       class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50">
 
+    <div class="relative w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg">
+
+      <!-- Fechar -->
+      <button data-modal-hide="modalMapa"
+              class="absolute text-2xl text-gray-600 top-3 right-4 hover:text-gray-800">&times;</button>
+
+      <h2 class="mb-4 text-xl font-semibold text-gray-900">
+        Localização do Negócio
+      </h2>
+
+      <!-- MAPA -->
+      <div>
+  <iframe id="mapFrame"
+          width="100%" height="400" style="border:0; border-radius: 10px;"
+          loading="lazy" allowfullscreen>
+  </iframe>
+</div>
+
+
+      <!-- Ações -->
+      <div class="flex justify-end mt-4">
+        <a th:href="'https://www.google.com/maps?q=' + ${negocio.latitude} + ',' + ${negocio.longitude}"
+           target="_blank"
+           class="px-4 py-2 text-white rounded-lg bg-emerald-600 hover:bg-emerald-700">
+          Abrir no Google Maps
+        </a>
+      </div>
+    </div>
+  </div>
 
   <script>
     function verificarStatus() {
@@ -436,6 +476,18 @@
     setInterval(verificarStatus, 60000);
   </script>
 
-  
+  <script>
+  document.querySelector("[data-modal-toggle='modalMapa']").addEventListener("click", () => {
+
+    const lat = parseFloat("[[${negocio.latitude}]]");
+    const lon = parseFloat("[[${negocio.longitude}]]");
+
+    const url = `https://www.google.com/maps?q=${lat},${lon}&output=embed`;
+
+    document.getElementById("mapFrame").src = url;
+});
+
+</script>
+
 </body>
 </html>
