@@ -36,7 +36,32 @@ public class Usuario {
     @Column(name = "atualizado_em")
     private LocalDateTime atualizadoEm;
 
+    // ============================
+    // DADOS DE ENDEREÇO
+    // ============================
+
+    @Column(nullable = true)
+    private String cep;
+
+    @Column(nullable = true)
+    private String estado;
+
+    @Column(nullable = true)
+    private String cidade;
+
+    @Column(nullable = true)
+    private String bairro;
+
+    @Column(nullable = true)
+    private String logradouro; // Rua, avenida...
+
+    @Column(nullable = true)
+    private String numero;
+
+    private String complemento; // opcional
+
     // Getters e Setters
+
     public Long getId() {
         return id;
     }
@@ -107,5 +132,61 @@ public class Usuario {
 
     public void setAtualizadoEm(LocalDateTime atualizadoEm) {
         this.atualizadoEm = atualizadoEm;
+    }
+
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
+
+    public String getCidade() {
+        return cidade;
+    }
+
+    public void setCidade(String cidade) {
+        this.cidade = cidade;
+    }
+
+    public String getBairro() {
+        return bairro;
+    }
+
+    public void setBairro(String bairro) {
+        this.bairro = bairro;
+    }
+
+    public String getLogradouro() {
+        return logradouro;
+    }
+
+    public void setLogradouro(String logradouro) {
+        this.logradouro = logradouro;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
+    }
+
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
     }
 }

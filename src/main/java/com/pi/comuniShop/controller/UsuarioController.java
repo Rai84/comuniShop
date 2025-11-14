@@ -3,10 +3,16 @@ package com.pi.comuniShop.controller;
 import com.pi.comuniShop.model.Usuario;
 import com.pi.comuniShop.service.CatalogoService;
 import com.pi.comuniShop.service.UsuarioService;
+
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
 
@@ -33,9 +39,10 @@ public class UsuarioController {
     }
 
     @PostMapping("/salvar")
-    public String salvar(@ModelAttribute Usuario usuario) {
+    public String salvar(@ModelAttribute Usuario usuario, RedirectAttributes redirectAttributes) {
         try {
-            usuarioService.salvar(usuario);
+            Usuario salvo = usuarioService.salvar(usuario);
+            redirectAttributes.addAttribute("usuarioId", salvo.getId());
         } catch (RuntimeException e) {
             // Redireciona com mensagem de erro
             return "redirect:/usuarios/novo?erro=" + e.getMessage();

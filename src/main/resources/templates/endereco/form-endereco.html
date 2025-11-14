@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head th:replace="~{fragments/head :: headFragment('Endereço')}"></head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+
+  <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+    <h2 class="text-2xl font-bold text-center mb-4">Endereço de Entrega</h2>
+
+    <form th:action="@{/enderecos/salvar}" th:object="${endereco}" method="post" class="space-y-4">
+      <input type="hidden" th:field="*{usuario.id}">
+
+      <div>
+        <label>Apelido</label>
+        <input th:field="*{apelido}" required class="w-full p-2 border rounded">
+      </div>
+
+      <div>
+        <label>CEP</label>
+        <input th:field="*{cep}" required class="w-full p-2 border rounded">
+      </div>
+
+      <div>
+        <label>Logradouro</label>
+        <input th:field="*{logradouro}" required class="w-full p-2 border rounded">
+      </div>
+
+      <div class="flex gap-2">
+        <div class="flex-1">
+          <label>Número</label>
+          <input th:field="*{numero}" required class="w-full p-2 border rounded">
+        </div>
+        <div class="flex-1">
+          <label>Complemento</label>
+          <input th:field="*{complemento}" class="w-full p-2 border rounded">
+        </div>
+      </div>
+
+      <div>
+        <label>Bairro</label>
+        <input th:field="*{bairro}" required class="w-full p-2 border rounded">
+      </div>
+
+      <div>
+        <label>Cidade</label>
+        <input th:field="*{cidade}" required class="w-full p-2 border rounded">
+      </div>
+
+      <div>
+        <label>UF</label>
+        <input th:field="*{uf}" maxlength="2" required class="w-full p-2 border rounded">
+      </div>
+
+      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+        Finalizar Cadastro
+      </button>
+    </form>
+  </div>
+
+</body>
+</html>

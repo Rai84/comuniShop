@@ -2,7 +2,8 @@
 <div th:fragment="criarContaFragment">
   <div id="criarContaModal"
        class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black bg-opacity-50">
-    <div class="relative w-full max-w-md p-8 bg-white shadow-xl rounded-2xl">
+
+    <div class="relative w-full max-w-2xl p-8 bg-white shadow-xl rounded-2xl">
 
       <!-- Botão Fechar -->
       <button id="closeModalBtn" class="absolute text-xl text-gray-500 top-3 right-3 hover:text-gray-700">&times;</button>
@@ -16,112 +17,256 @@
       <div class="flex justify-center mb-6">
         <button id="btnCliente" type="button"
                 class="px-4 py-2 text-white bg-blue-600 rounded-l-lg">
-          usuario
+          Usuário
         </button>
+
         <button id="btnNegocio" type="button"
                 class="px-4 py-2 bg-gray-200 rounded-r-lg">
           Negócio
         </button>
       </div>
 
-      <!-- ================= FORM CLIENTE ================= -->
+      <!-- ========================== FORM CLIENTE ========================== -->
       <form id="formCliente" th:action="@{/usuarios/salvar}" method="post" class="space-y-3">
-        <input type="hidden" name="tipo" value="USUARIO"/>
+        <input type="hidden" name="tipo" value="CLIENTE">
+        <!-- ====== ETAPA 1: DADOS PESSOAIS ====== -->
+        <div id="clienteEtapa1">
 
-        <div>
-          <label>Nome completo</label>
-          <input type="text" name="nome" required class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label>CPF</label>
-          <input type="text" name="cpf" placeholder="000.000.000-00" required class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label>Telefone</label>
-          <input type="text" name="telefone" placeholder="(11) 99999-9999" required class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label>E-mail</label>
-          <input type="email" name="email" required class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label>Senha</label>
-          <input type="password" name="senha" required minlength="6" class="w-full p-2 border rounded">
+          <div>
+            <label>Nome completo</label>
+            <input type="text" name="nome" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>CPF</label>
+            <input type="text" name="cpf" placeholder="000.000.000-00" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Telefone</label>
+            <input type="text" name="telefone" placeholder="(11) 99999-9999" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>E-mail</label>
+            <input type="email" name="email" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Senha</label>
+            <input type="password" name="senha" required minlength="6" class="w-full p-2 border rounded">
+          </div>
+
+          <!-- Botão avançar -->
+          <button type="button" id="avancarCliente"
+                  class="w-full py-2 mt-3 text-white bg-blue-600 rounded hover:bg-blue-700">
+            Avançar → Endereço
+          </button>
         </div>
 
-        <button type="submit" class="w-full py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
-          Criar conta de Cliente
-        </button>
+        <!-- ====== ETAPA 2: ENDEREÇO CLIENTE (grid) ====== -->
+        <div id="clienteEtapa2" class="hidden space-y-3">
+
+          <div>
+            <label>CEP</label>
+            <input type="text" name="cep" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Estado</label>
+            <input type="text" name="estado" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Cidade</label>
+            <input type="text" name="cidade" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Bairro</label>
+            <input type="text" name="bairro" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Logradouro</label>
+            <input type="text" name="logradouro" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Número</label>
+            <input type="text" name="numero" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Complemento (opcional)</label>
+            <input type="text" name="complemento" class="w-full p-2 border rounded">
+          </div>
+
+          <!-- Botão enviar -->
+          <div class="flex gap-3">
+            <button type="button" id="voltarCliente"
+                    class="w-1/2 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">
+              ← Voltar
+            </button>
+          
+            <button type="submit"
+                    class="w-1/2 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
+              Criar Conta
+            </button>
+          </div>
+        </div>
       </form>
 
-      <!-- ================= FORM NEGÓCIO ================= -->
+      <!-- ========================== FORM NEGÓCIO ========================== -->
       <form id="formNegocio" th:action="@{/negocios/salvar}" method="post" class="hidden space-y-3">
-        <input type="hidden" name="tipo" value="COMERCIANTE"/>
 
-        <div>
-          <label>Nome do dono</label>
-          <input type="text" name="nome" required class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label>CPF</label>
-          <input type="text" name="cpf" placeholder="000.000.000-00" required class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label>Telefone</label>
-          <input type="text" name="telefone" placeholder="(11) 99999-9999" required class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label>E-mail comercial</label>
-          <input type="email" name="email" required class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label>Senha</label>
-          <input type="password" name="senha" required minlength="6" class="w-full p-2 border rounded">
+        <!-- ====== ETAPA 1: DADOS DO DONO + NEGÓCIO ====== -->
+        <div id="negocioEtapa1">
+
+          <div>
+            <label>Nome do dono</label>
+            <input type="text" name="nome" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>CPF</label>
+            <input type="text" name="cpf" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Telefone</label>
+            <input type="text" name="telefone" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>E-mail comercial</label>
+            <input type="email" name="email" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Senha</label>
+            <input type="password" name="senha" minlength="6" required class="w-full p-2 border rounded">
+          </div>
+
+          <hr class="my-4">
+
+          <div>
+            <label>Nome do negócio</label>
+            <input type="text" name="nomeNegocio" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>CNPJ (opcional)</label>
+            <input type="text" name="cnpj" class="w-full p-2 border rounded">
+          </div>
+
+          <button type="button" id="avancarNegocio"
+                  class="w-full py-2 mt-3 text-white bg-green-600 rounded hover:bg-green-700">
+            Avançar → Endereço
+          </button>
+
         </div>
 
-        <hr>
+        <!-- ====== ETAPA 2: ENDEREÇO NEGÓCIO ====== -->
+        <div id="negocioEtapa2" class="hidden space-y-3">
 
-        <div>
-          <label>Nome do negócio</label>
-          <input type="text" name="nomeNegocio" required class="w-full p-2 border rounded">
-        </div>
-        <div>
-          <label>CNPJ (opcional)</label>
-          <input type="text" name="cnpj" placeholder="00.000.000/0000-00" class="w-full p-2 border rounded">
-        </div>
+          <div>
+            <label>CEP</label>
+            <input type="text" name="cep" required class="w-full p-2 border rounded">
+          </div>
 
-        <button type="submit" class="w-full py-2 text-white bg-green-600 rounded hover:bg-green-700">
-          Criar conta de Negócio
-        </button>
+          <div>
+            <label>Estado</label>
+            <input type="text" name="estado" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Cidade</label>
+            <input type="text" name="cidade" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Bairro</label>
+            <input type="text" name="bairro" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Logradouro</label>
+            <input type="text" name="logradouro" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Número</label>
+            <input type="text" name="numero" required class="w-full p-2 border rounded">
+          </div>
+
+          <div>
+            <label>Complemento</label>
+            <input type="text" name="complemento" class="w-full p-2 border rounded">
+          </div>
+
+          <div class="flex gap-3">
+            <button type="button" id="voltarNegocio"
+                    class="w-1/2 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300">
+              ← Voltar
+            </button>
+          
+            <button type="submit"
+                    class="w-1/2 py-2 text-white bg-blue-600 rounded hover:bg-blue-700">
+              Criar Conta
+            </button>
+          </div>
+        </div>
       </form>
-
     </div>
   </div>
 
-  <!-- Script para alternar os formulários -->
+  <!-- Script -->
   <script>
     const btnCliente = document.getElementById("btnCliente");
     const btnNegocio = document.getElementById("btnNegocio");
+
     const formCliente = document.getElementById("formCliente");
     const formNegocio = document.getElementById("formNegocio");
-    const closeModalBtn = document.getElementById("closeModalBtn");
 
-    btnCliente.addEventListener("click", () => {
+    const clienteEtapa1 = document.getElementById("clienteEtapa1");
+    const clienteEtapa2 = document.getElementById("clienteEtapa2");
+
+    const negocioEtapa1 = document.getElementById("negocioEtapa1");
+    const negocioEtapa2 = document.getElementById("negocioEtapa2");
+
+    document.getElementById("avancarCliente").onclick = () => {
+      clienteEtapa1.classList.add("hidden");
+      clienteEtapa2.classList.remove("hidden");
+    };
+
+    document.getElementById("avancarNegocio").onclick = () => {
+      negocioEtapa1.classList.add("hidden");
+      negocioEtapa2.classList.remove("hidden");
+    };
+
+    btnCliente.onclick = () => {
       formCliente.classList.remove("hidden");
       formNegocio.classList.add("hidden");
-      btnCliente.classList.add("bg-blue-600", "text-white");
-      btnNegocio.classList.remove("bg-green-600", "text-white");
-    });
+    };
 
-    btnNegocio.addEventListener("click", () => {
+    btnNegocio.onclick = () => {
       formNegocio.classList.remove("hidden");
       formCliente.classList.add("hidden");
-      btnNegocio.classList.add("bg-green-600", "text-white");
-      btnCliente.classList.remove("bg-blue-600", "text-white");
-    });
+    };
 
-    closeModalBtn.addEventListener("click", () => {
+    document.getElementById("closeModalBtn").onclick = () => {
       document.getElementById("criarContaModal").classList.add("hidden");
-    });
+    };
+
+    document.getElementById("voltarCliente").onclick = () => {
+    clienteEtapa2.classList.add("hidden");
+    clienteEtapa1.classList.remove("hidden");
+  };
+
+  document.getElementById("voltarNegocio").onclick = () => {
+    negocioEtapa2.classList.add("hidden");
+    negocioEtapa1.classList.remove("hidden");
+  };
   </script>
 </div>

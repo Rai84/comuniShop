@@ -37,7 +37,6 @@ public class CustomSuccessHandler implements AuthenticationSuccessHandler {
 
         switch (usuario.getTipo()) {
             case ADMIN -> response.sendRedirect("/admin/painel");
-            case ESTOQUISTA -> response.sendRedirect("/estoquista/painel");
 
             case CLIENTE -> {
                 Negocio negocio = negocioRepository.findByDono(usuario);

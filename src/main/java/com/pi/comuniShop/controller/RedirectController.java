@@ -35,10 +35,6 @@ public class RedirectController {
         switch (usuario.getTipo()) {
             case ADMIN:
                 return "redirect:/admin/painel";
-
-            case ESTOQUISTA:
-                return "redirect:/estoquista/painel";
-
             case CLIENTE:
                 Negocio negocio = negocioRepository.findByDono(usuario);
                 if (negocio != null) {

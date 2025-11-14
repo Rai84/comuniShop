@@ -4,7 +4,7 @@
 
 <body class="px-4 ml-40 text-black">
   <nav id="menu1" class="fixed top-0 left-0 flex flex-col items-start w-40 h-full px-4 py-6 text-white bg-zinc-600">
-    <a class="cursor-pointer"><strong>Plano: </strong><span th:text="${negocio.plano}"></span></a>
+    <!-- <a class="cursor-pointer"><strong>Plano: </strong><span th:text="${negocio.plano}"></span></a> -->
     <button data-modal-target="modalNovoProduto" data-modal-toggle="modalNovoProduto">
       <i class="bi bi-plus-circle"></i> Novo Produto
     </button>
@@ -16,7 +16,7 @@
     <button data-modal-target="modalPerfil" data-modal-toggle="modalPerfil" class="flex items-center">
       <i class="pr-1 bi bi-person-circle"></i>
       <span th:text="${negocio.nome}" class="pr-1"></span>
-      <span th:text="' (' + ${negocio.plano} + ')'"></span>
+      <!-- <span th:text="' (' + ${negocio.plano} + ')'"></span> -->
     </button>
     <div class="flex gap-5">
       <strong>Status da Loja:</strong> <span id="statusLoja"></span>
@@ -98,14 +98,19 @@
       <p><strong>Agendamento Ativo:</strong> <span th:text="${negocio.agendamentoAtivo} ? 'Sim' : 'Não'"></span></p>
     </div>
 
-    <div class="flex flex-col items-center justify-center h-40 text-white rounded-lg shadow-lg w-80 bg-zinc-600">
-      <h3>Endereço <i class="bi bi-geo-alt-fill"></i></h3>
-      <!-- <p><strong>Rua:</strong> <span th:text="${negocio.endereco.rua}"></span></p>
-      <p><strong>Número:</strong> <span th:text="${negocio.endereco.numero}"></span></p>
-      <p><strong>Bairro:</strong> <span th:text="${negocio.endereco.bairro}"></span></p>
-      <p><strong>Cidade:</strong> <span th:text="${negocio.endereco.cidade}"></span></p>
-      <p><strong>Estado:</strong> <span th:text="${negocio.endereco.estado}"></span></p> -->
+    <div class="flex flex-col items-start justify-center p-4 space-y-1 text-white rounded-lg shadow-lg w-80 bg-zinc-600">
+      <h3 class="w-full mb-1 text-lg font-semibold text-center">
+        Endereço <i class="bi bi-geo-alt-fill"></i>
+      </h3>
+
+      <p class="text-sm"><strong>CEP:</strong> <span th:text="${negocio.cep}"></span></p>
+      <p class="text-sm"><strong>Rua:</strong> <span th:text="${negocio.logradouro}"></span></p>
+      <p class="text-sm"><strong>Número:</strong> <span th:text="${negocio.numero}"></span></p>
+      <p class="text-sm"><strong>Bairro:</strong> <span th:text="${negocio.bairro}"></span></p>
+      <p class="text-sm"><strong>Cidade:</strong> <span th:text="${negocio.cidade}"></span></p>
+      <p class="text-sm"><strong>Estado:</strong> <span th:text="${negocio.estado}"></span></p>
     </div>
+
   </div>
   
 
@@ -210,11 +215,11 @@
         </div>
 
         <div th:if="${negocio.agendamentoAtivo}">
-  <label for="duracao" class="block text-sm font-medium text-gray-700 mb-1">
+  <label for="duracao" class="block mb-1 text-sm font-medium text-gray-700">
     Duração (minutos)
   </label>
   <input type="number" id="duracao" name="duracaoMinutos" min="5" step="5"
-         class="border rounded-lg p-2 w-full focus:ring-emerald-500 focus:border-emerald-500"
+         class="w-full p-2 border rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
          placeholder="Ex: 30">
 </div>
 

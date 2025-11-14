@@ -44,8 +44,18 @@ public class NegocioController {
             @RequestParam String email,
             @RequestParam String senha,
             @RequestParam String nomeNegocio,
-            @RequestParam(required = false) String cnpj) {
+            @RequestParam(required = false) String cnpj,
 
+            // ENDEREÇO DO NEGÓCIO
+            @RequestParam String cep,
+            @RequestParam String estado,
+            @RequestParam String cidade,
+            @RequestParam String bairro,
+            @RequestParam String logradouro,
+            @RequestParam String numero,
+            @RequestParam(required = false) String complemento) {
+
+        // 1️⃣ CRIA O DONO
         Usuario dono = new Usuario();
         dono.setNome(nome);
         dono.setCpf(cpf);
@@ -53,14 +63,27 @@ public class NegocioController {
         dono.setEmail(email);
         dono.setSenha(senha);
         dono.setTipo(TipoUsuario.CLIENTE);
+
         usuarioService.salvar(dono);
 
+        // 2️⃣ CRIA O NEGOCIO
         Negocio negocio = new Negocio();
         negocio.setNome(nomeNegocio);
         negocio.setCnpj(cnpj);
         negocio.setDono(dono);
+
         negocio.setEmailComercial(email);
         negocio.setTelefoneComercial(telefone);
+
+        // ⭐ AQUI ESTAVA FALTANDO → ENDEREÇO
+        negocio.setCep(cep);
+        negocio.setEstado(estado);
+        negocio.setCidade(cidade);
+        negocio.setBairro(bairro);
+        negocio.setLogradouro(logradouro);
+        negocio.setNumero(numero);
+        negocio.setComplemento(complemento);
+
         negocioService.salvar(negocio);
 
         return "redirect:/negocios/" + negocio.getId();
@@ -106,7 +129,6 @@ public class NegocioController {
         return "negocio/negocio-form";
     }
 
-    // ✅ Atualizar negócio — sem mexer no dono
     @PostMapping("/{id}/atualizar")
     public String atualizar(@PathVariable Long id,
             @ModelAttribute Negocio dados) {
@@ -124,6 +146,15 @@ public class NegocioController {
         negocio.setCatalogoAtivo(dados.isCatalogoAtivo());
         negocio.setAgendamentoAtivo(dados.isAgendamentoAtivo());
         negocio.setEntregasAtivas(dados.isEntregasAtivas());
+
+        // ENDEREÇO ATUALIZA AQUI 👇
+        negocio.setCep(dados.getCep());
+        negocio.setEstado(dados.getEstado());
+        negocio.setCidade(dados.getCidade());
+        negocio.setBairro(dados.getBairro());
+        negocio.setLogradouro(dados.getLogradouro());
+        negocio.setNumero(dados.getNumero());
+        negocio.setComplemento(dados.getComplemento());
 
         negocioService.salvar(negocio);
 
