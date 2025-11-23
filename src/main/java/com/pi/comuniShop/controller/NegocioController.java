@@ -9,12 +9,11 @@ import com.pi.comuniShop.service.NegocioService;
 import com.pi.comuniShop.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -174,4 +173,42 @@ public class NegocioController {
         negocioService.excluir(id);
         return "redirect:/negocios";
     }
+
+    @PostMapping("/{id}/atualizar-campo")
+@ResponseBody
+public String atualizarCampo(
+        @PathVariable Long id,
+        @RequestParam String campo,
+        @RequestParam String valor) {
+
+    System.out.println("🔥 Recebido campo=" + campo + " | valor=" + valor);
+
+    Negocio negocio = negocioService.buscarPorId(id);
+    if (negocio == null) {
+        System.out.println("❌ Negócio não encontrado");
+        return "erro";
+    }
+
+    try {
+        switch (campo) {
+            case "horaAbertura" -> negocio.setHoraAbertura(LocalTime.parse(valor));
+            case "horaFechamento" -> negocio.setHoraFechamento(LocalTime.parse(valor));
+            case "catalogoAtivo" -> negocio.setCatalogoAtivo(Boolean.parseBoolean(valor));
+            case "agendamentoAtivo" -> negocio.setAgendamentoAtivo(Boolean.parseBoolean(valor));
+            case "entregasAtivas" -> negocio.setEntregasAtivas(Boolean.parseBoolean(valor));
+            default -> {
+                System.out.println("❌ Campo inválido: " + campo);
+                return "campo_invalido";
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return "erro_parse";
+    }
+
+    negocioService.salvar(negocio);
+    return "ok";
+}
+
+
 }

@@ -173,7 +173,7 @@ public class CatalogoController {
         model.addAttribute("imagens", imagens);
 
         Long negocioId = item.getNegocio().getId();
-        return "redirect:/negocios/" + negocioId;
+        return "redirect:/catalogo/" + negocioId;
     }
 
     // ==================== MOVER IMAGEM PARA CIMA ====================

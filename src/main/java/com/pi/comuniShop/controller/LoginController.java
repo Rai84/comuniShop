@@ -1,5 +1,9 @@
 package com.pi.comuniShop.controller;
 
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +13,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import com.pi.comuniShop.model.Catalogo;
+import com.pi.comuniShop.model.Negocio;
 import com.pi.comuniShop.model.Usuario;
 import com.pi.comuniShop.repository.UsuarioRepository;
 
@@ -36,19 +42,28 @@ public class LoginController {
 
     @GetMapping("/usuario/home")
     public String home(@AuthenticationPrincipal User user, Model model) {
-        // busca o usuário logado pelo e-mail (username)
+        
+        // busca o usuário logado
         Usuario usuario = usuarioRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-        // Log de depuração
+        
         log.info("🟢 Entrou no método /usuario/home para o usuário: {}", usuario.getEmail());
-
-        // carrega os produtos do catálogo
-        var produtos = catalogoService.listarTodos();
-        log.info("📦 Produtos carregados: {}", produtos.size());
-
+        
+        // carrega todos itens do catálogo
+        List<Catalogo> itens = catalogoService.listarTodos();
+        log.info("📦 Itens carregados: {}", itens.size());
+        
+        // AGRUPA itens por negócio
+        Map<Negocio, List<Catalogo>> catalogosPorNegocio = itens.stream()
+                .collect(Collectors.groupingBy(Catalogo::getNegocio));
+        
+        // envia para a view
         model.addAttribute("usuario", usuario);
-        model.addAttribute("produtos", produtos);
+        model.addAttribute("itens", itens);                     // lista normal
+        model.addAttribute("catalogosPorNegocio", catalogosPorNegocio); // agrupado
+        
         return "usuario/home";
     }
+
+
 }

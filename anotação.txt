@@ -1,0 +1,75 @@
+                    |-  -| └─  ┌─  ┘  ┐
+
+    SERVICE
+
+CatalogoService.java
+    |    BASE
+    |    |- salvar() 
+    |    |- excluir() 
+    |    |- buscarPorId() 
+    |    └─ listarTodos()
+    |
+    |- SalvarSomenteCatalogo() 
+    └─ ListarPorNegocio()
+
+ImagemCatalogoService.java
+    |    BASE
+    |    |- salvar()
+    |    |- excluir()
+    |    |- buscarPorId()
+    |    └─ listarTodos()
+    |
+    |- listarPorCatalogo()
+    |- salvarArquivos()
+    |- definirComoPrincipal()
+    |- moverImagem()
+    └─ trocarOrdem()
+
+NegocioService.java
+    |    BASE
+    |    |- salvar()
+    |    |- excluir()
+    |    |- buscarPorId()
+    |    └─ listarTodos()
+    |
+    |- buscarPorDono()
+    └─ listarPorDono()
+
+UsuarioService.java
+    BASE
+    |- salvar()
+    |- excluir()
+    |- buscarPorId()
+    └─ listarTodos()
+    
+
+    CONTROLLER
+
+CatalogoController.java /catalogo
+    |    IMPORT
+    |    |- CatalogoService
+    |    |- ImagemCatalogoService
+    |    └─ NegocioService
+    |
+    |- listar "lista todos os itens de todos os catalogos"
+    |- /novo "cria um novo item do catalogo para um negocio selecionado manualmente"
+    |- /novo/{negocioId} "cria um novo item com o negocio recebido altomatico"
+    |- /salvar 
+    |- /editar/{id} 
+    |- /excluir/{id}
+    |- /{id} "mostrar os detalhes do catalogo"
+    |
+    |- /imagem/principal/{id}
+    |- /imagem/excluir/{id}
+    |- /imagem/mover/{id}/up
+    └─ /imagem/mover/{id}/down
+
+
+
+LoginController.java
+
+NegocioController.java
+
+RedirectController.java
+
+UsuarioController.java

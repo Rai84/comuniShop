@@ -35,12 +35,16 @@ public class RedirectController {
         switch (usuario.getTipo()) {
             case ADMIN:
                 return "redirect:/admin/painel";
+
+            case ESTOQUISTA:
+                return "redirect:/estoquista/painel";
+
             case CLIENTE:
                 Negocio negocio = negocioRepository.findByDono(usuario);
                 if (negocio != null) {
                     return "redirect:/negocios/" + negocio.getId();
                 }
-                return "redirect:/cliente/home";
+                return "redirect:/usuario/home";
 
             default:
                 return "redirect:/usuario/home";

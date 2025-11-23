@@ -3,141 +3,246 @@
 <head th:replace="~{fragments/head :: headFragment('Home')}"></head>
 
 <body class="text-gray-900 bg-gray-100">
-  <div th:replace="~{fragments/menuHome :: menuFragment}" class="fixed"></div>
+
+  <!-- MENU SUPERIOR -->
+  <div th:replace="~{fragments/menuHome :: menuFragment}"></div>
 
   <!-- BARRA LATERAL -->
-  <nav class="w-8 h-[calc(100vh-40px)] bg-gray-600 fixed flex items-center justify-between flex-col">
+  <nav class="w-8 h-[calc(100vh-40px)] bg-gray-600 fixed flex items-center justify-between flex-col top-10">
     <div class="flex flex-col items-center gap-1 pt-4 text-white">
       <i class="bi bi-box"></i>
       <i class="bi bi-box"></i>
       <i class="bi bi-box"></i>
       <i class="bi bi-box"></i>
     </div>
-    <button class="w-6 h-20 bg-[--color-destaque] rounded-4xl">
-      <i class="text-2xl text-white bi bi-chevron-compact-right"></i>
+
+    <button id="abrirMapa" class="w-6 h-20 bg-[--color-destaque] rounded-4xl">
+      <i class="text-2xl text-white bi bi-geo-alt-fill"></i>
     </button>
+
     <button id="abrirModal" class="text-lg text-white transition hover:text-[--color-destaque] pb-2.5">
       <i class="bi bi-gear-fill"></i>
     </button>
   </nav>
 
-  <!-- MODAL -->
-  <div id="popup-modal"
-       class="fixed bottom-0 z-50 hidden w-full max-w-sm p-4 transition-all duration-200 scale-95 opacity-0 left-8">
-    <div class="relative bg-white shadow-xl rounded-xl dark:bg-gray-800" id="conteudo-modal">
-      <!-- BOTÃO FECHAR -->
-      <button id="fecharModal"
-        class="absolute flex items-center justify-center w-8 h-8 text-sm text-gray-400 rounded-lg top-3 right-3 hover:text-gray-900 dark:hover:text-white">
-        <i class="bi bi-x-lg"></i>
-      </button>
+  <!-- CONTEÚDO -->
+  <div class="w-[calc(100vw-47px)] absolute left-8 p-10">
 
-      <!-- CONTEÚDO -->
-      <div class="p-6 text-center">
-        <h3 class="mb-3 text-lg font-semibold text-gray-800 dark:text-gray-100">
-          ⚙️ Configurações
-        </h3>
-        <p class="mb-6 text-gray-600 dark:text-gray-300">
-          Modal no canto inferior esquerdo, sem fundo e fecha ao clicar fora.
-        </p>
-        <button id="fecharModal2"
-          class="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700">
+    <!-- =============== LOJAS COM CATALOGO ATIVO =============== -->
+    <h2 class="text-xl font-bold mb-4">Lojas Disponíveis</h2>
+
+    <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+
+      <div th:each="entry : ${catalogosPorNegocio}">
+        <div th:if="${entry.key.catalogoAtivo}" class="p-4 bg-white shadow-md rounded-xl flex flex-col justify-between">
+
+          <h2 class="text-lg font-semibold text-gray-800" th:text="${entry.key.nome}"></h2>
+
+          <p class="text-sm text-gray-600 mt-1">
+            🕒 
+            <span th:text="${entry.key.horaAbertura}"></span> -
+            <span th:text="${entry.key.horaFechamento}"></span>
+          </p>
+
+          <button
+            th:data-modal-target="'modalLoja_' + ${entry.key.id}"
+            th:data-modal-toggle="'modalLoja_' + ${entry.key.id}"
+            class="w-full py-2 mt-4 bg-destaque text-black rounded-lg hover:bg-destaque2">
+            Ver Itens
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =============== ITENS DE LOJAS SEM CATALOGO =============== -->
+    <h2 class="text-xl font-bold mt-10 mb-4">Produtos Disponíveis</h2>
+
+    <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+
+      <div th:each="i : ${itens}" th:if="${!i.negocio.catalogoAtivo}"
+           class="flex flex-col justify-between overflow-hidden transition-shadow duration-300 bg-white shadow-md rounded-2xl hover:shadow-xl">
+
+        <img th:src="${#lists.isEmpty(i.imagens) ? '/img/no-image.png' : i.imagens[0].url}"
+             class="object-cover w-full h-48 transition-transform duration-300 hover:scale-105">
+
+        <div class="flex flex-col flex-grow p-4">
+
+          <h3 th:text="${i.nome}" class="mb-1 text-lg font-semibold text-gray-900 truncate"></h3>
+
+          <p th:text="${i.descricao}" class="mb-2 text-sm text-gray-600 line-clamp-2"></p>
+
+          <p class="font-semibold text-gray-700">
+            R$ <span th:text="${#numbers.formatDecimal(i.preco, 1, 2)}"></span>
+          </p>
+
+          <button
+            th:data-modal-target="'modalItem_' + ${i.id}"
+            th:data-modal-toggle="'modalItem_' + ${i.id}"
+            class="inline-block w-full py-2 mt-3 text-sm font-medium text-center text-black bg-destaque rounded-lg hover:bg-destaque2">
+            Ver Detalhes
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- =============== MODAIS DE ITENS (Catalogo) =============== -->
+    <div th:each="i : ${itens}"
+         th:id="'modalItem_' + ${i.id}"
+         class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center">
+
+      <div class="w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg overflow-y-auto max-h-[90vh]">
+
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold" th:text="${i.nome}"></h2>
+
+          <button th:data-modal-hide="'modalItem_' + ${i.id}" class="text-2xl text-gray-600 hover:text-gray-800">&times;</button>
+        </div>
+
+        <p><strong>Descrição:</strong> <span th:text="${i.descricao}"></span></p>
+        <p><strong>Preço:</strong> R$ <span th:text="${#numbers.formatDecimal(i.preco,1,2)}"></span></p>
+        <p><strong>Negócio:</strong> <span th:text="${i.negocio.nome}"></span></p>
+
+        <h3 class="mt-4 mb-2 font-semibold text-lg">Imagens</h3>
+
+        <div th:if="${i.imagens != null && !i.imagens.isEmpty()}"
+             class="grid grid-cols-2 gap-4">
+          <div th:each="img : ${i.imagens}" class="p-2 bg-gray-100 border rounded-lg">
+            <img th:src="${img.url}" class="object-cover w-full h-40 rounded-md">
+          </div>
+        </div>
+
+        <div th:if="${i.imagens == null || i.imagens.isEmpty()}" class="text-sm text-gray-500">
+          Nenhuma imagem cadastrada.
+        </div>
+
+        <button th:data-modal-hide="'modalItem_' + ${i.id}"
+                class="mt-6 px-4 py-2 text-white rounded-lg bg-destaque hover:bg-destaque2 w-full">
           Fechar
         </button>
+
       </div>
     </div>
-  </div>
 
-  <!-- Dados do usuário logado -->
-  <div class="max-w-3xl p-6 mx-auto mt-10 bg-white rounded-lg shadow">
-    <h1 class="mb-4 text-2xl font-bold text-gray-900">
-      Bem-vindo, <span th:text="${usuario.nome}">Usuário</span>!
-    </h1>
+    <!-- =============== MODAIS DAS LOJAS =============== -->
+    <div th:each="entry : ${catalogosPorNegocio}">
+      <div th:if="${entry.key.catalogoAtivo}"
+           th:id="'modalLoja_' + ${entry.key.id}"
+           class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center">
 
-    <p class="text-gray-700"><strong>E-mail:</strong> <span th:text="${usuario.email}">email@teste.com</span></p>
-    <p class="text-gray-700"><strong>Tipo:</strong> <span th:text="${usuario.tipo}">USUARIO</span></p>
+        <div class="max-w-3xl w-full bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
 
-    <div class="mt-6">
-      <a th:href="@{/logout}"
-         class="inline-block px-4 py-2 text-white bg-orange-500 rounded-lg hover:bg-orange-600">
-         Sair
-      </a>
-    </div>
-  </div>
+          <div class="flex justify-between mb-4">
+            <h2 class="text-xl font-bold" th:text="${entry.key.nome}"></h2>
+            <button th:data-modal-hide="'modalLoja_' + ${entry.key.id}"
+                    class="text-gray-600 text-2xl hover:text-black">&times;</button>
+          </div>
 
-  <!-- Produtos Disponíveis: -->
-  <h1 style="text-align:center; margin: 20px 0;">🛍️ Todos os Produtos</h1>
+          <p class="mb-4 text-gray-600">
+            🕒 Horário: 
+            <span th:text="${entry.key.horaAbertura}"></span> - 
+            <span th:text="${entry.key.horaFechamento}"></span>
+          </p>
 
-  <div class="grid" th:if="${#lists.isEmpty(produtos)}">
-    <p>Nenhum produto disponível no momento.</p>
-  </div>
+          <!-- LISTA DE ITENS DO NEGÓCIO -->
+          <div class="grid gap-4 sm:grid-cols-2">
 
-  <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 bg-gray-50"
-     th:unless="${#lists.isEmpty(produtos)}">
+            <div th:each="i : ${entry.value}" class="border p-3 rounded-lg shadow">
 
-  <div th:each="p : ${produtos}"
-       class="flex flex-col justify-between overflow-hidden transition-shadow duration-300 bg-white shadow-md rounded-2xl hover:shadow-xl">
-    
-    <!-- Imagem -->
-    <a th:href="@{/catalogo/{id}(id=${p.id})}" class="block overflow-hidden">
-      <img th:src="${#lists.isEmpty(p.imagens) ? '/img/no-image.png' : p.imagens[0].url}"
-           alt="Imagem do produto"
-           class="object-cover w-full h-48 transition-transform duration-300 hover:scale-105">
-    </a>
+              <img th:src="${#lists.isEmpty(i.imagens) ? '/img/no-image.png' : i.imagens[0].url}"
+                   class="w-full h-32 object-cover rounded mb-2">
 
-    <!-- Conteúdo -->
-    <div class="flex flex-col flex-grow p-4">
-      <h3 th:text="${p.nome}" class="mb-1 text-lg font-semibold text-gray-900 truncate"></h3>
-      <p th:text="${p.descricao}" class="mb-2 text-sm text-gray-600 line-clamp-2"></p>
-      
-      <div class="mt-auto">
-        <p class="font-semibold text-gray-700">
-          R$ <span th:text="${#numbers.formatDecimal(p.preco, 1, 2)}"></span>
-        </p>
-        <p th:text="'Negócio: ' + ${p.negocio.nome}" class="mb-3 text-xs text-gray-500"></p>
+              <h3 class="font-semibold" th:text="${i.nome}"></h3>
 
-        <a th:href="@{/catalogo/{id}(id=${p.id})}"
-           class="inline-block w-full py-2 text-sm font-medium text-center text-white transition-colors duration-300 rounded-lg bg-emerald-500 hover:bg-emerald-600">
-          Ver Detalhes
-        </a>
+              <p class="text-sm text-gray-600 line-clamp-2" th:text="${i.descricao}"></p>
+
+              <p class="font-bold mt-2">
+                R$ <span th:text="${#numbers.formatDecimal(i.preco,1,2)}"></span>
+              </p>
+
+              <button
+                th:data-modal-target="'modalItem_' + ${i.id}"
+                th:data-modal-toggle="'modalItem_' + ${i.id}"
+                class="w-full py-2 mt-2 text-sm bg-destaque rounded-lg hover:bg-destaque2">
+                Ver Detalhes
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+
       </div>
     </div>
-  </div>
-</div>
 
-  <!-- SCRIPT DE CONFIGURAÇÃO -->
+  </div><!-- FIM CONTEÚDO -->
+
+
+  <!-- =============== SCRIPT CONFIGURAÇÕES =============== -->
   <script>
     const modalEl = document.getElementById('popup-modal');
     const conteudoModal = document.getElementById('conteudo-modal');
 
-    const options = {
+    const modal = new Modal(modalEl, {
       placement: 'bottom-left',
-      backdrop: 'static', // sem overlay
+      backdrop: 'static',
       backdropClasses: 'hidden',
-      closable: true,
-      onShow: () => {
-        modalEl.classList.remove('hidden', 'opacity-0', 'scale-95');
-        modalEl.classList.add('opacity-100', 'scale-100');
-      },
-      onHide: () => {
-        modalEl.classList.add('opacity-0', 'scale-95');
-        setTimeout(() => modalEl.classList.add('hidden'), 150);
-      }
-    };
+      closable: true
+    });
 
-    const modal = new Modal(modalEl, options);
-
-    // Botões internos
     document.getElementById('abrirModal').addEventListener('click', () => modal.show());
     document.getElementById('fecharModal').addEventListener('click', () => modal.hide());
     document.getElementById('fecharModal2').addEventListener('click', () => modal.hide());
-
-    // 👇 Fecha ao clicar fora do conteúdo
-    document.addEventListener('click', (event) => {
-      const clicouFora = !conteudoModal.contains(event.target) && !event.target.closest('#abrirModal');
-      if (!modalEl.classList.contains('hidden') && clicouFora) {
-        modal.hide();
-      }
-    });
   </script>
+
+
+  <!-- =============== SCRIPT DO MAPA =============== -->
+  <script th:inline="javascript">
+    const abrirMapa = document.getElementById("abrirMapa");
+    const modalMapa = document.getElementById("modalMapa");
+    const fecharMapa = document.getElementById("fecharMapa");
+
+    abrirMapa.onclick = () => {
+      modalMapa.classList.remove("hidden");
+      setTimeout(initMap, 100);
+    };
+
+    fecharMapa.onclick = () => modalMapa.classList.add("hidden");
+    modalMapa.onclick = (e) => { if (e.target === modalMapa) modalMapa.classList.add("hidden"); };
+
+    const usuarioLat = /*[[${usuario.latitude}]]*/ 0;
+    const usuarioLng = /*[[${usuario.longitude}]]*/ 0;
+
+    const negocios = [
+      /*[# th:each="i : ${itens}"]*/
+      {
+        nome: '[[${i.negocio.nome}]]',
+        lat: '[[${i.negocio.latitude}]]',
+        lng: '[[${i.negocio.longitude}]]'
+      },
+      /*[/]*/
+    ];
+
+    let map;
+    function initMap() {
+      map = L.map('map').setView([usuarioLat, usuarioLng], 14);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+      }).addTo(map);
+
+      L.marker([usuarioLat, usuarioLng]).bindPopup("Você está aqui").addTo(map);
+
+      negocios.forEach(n => {
+        if (n.lat && n.lng) {
+          L.marker([n.lat, n.lng]).bindPopup(n.nome).addTo(map);
+        }
+      });
+    }
+  </script>
+
 </body>
 </html>

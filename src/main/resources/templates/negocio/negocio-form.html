@@ -16,7 +16,7 @@
     <input type="text" th:field="*{nome}" required><br><br>
 
     <label>Descrição:</label><br>
-    <textarea th:field="*{descricao}" rows="4"></textarea><br><br>
+    <input th:field="*{descricao}" rows="4"></input><br><br>
 
     <label>Telefone comercial:</label><br>
     <input type="text" th:field="*{telefoneComercial}"><br><br>
@@ -37,6 +37,27 @@
     <label><input type="checkbox" th:field="*{agendamentoAtivo}"> Permite agendamento</label><br>
     <label><input type="checkbox" th:field="*{funcionariosAtivos}"> Possui funcionários</label><br>
     <label><input type="checkbox" th:field="*{ativo}"> Negócio ativo</label><br><br>
+
+    <label>CEP</label><br>
+    <input type="text" th:field="*{cep}"><br><br>
+
+    <label>Estado</label><br>
+    <input type="text" th:field="*{estado}"><br><br>
+
+    <label>Cidade</label><br>
+    <input type="text" th:field="*{cidade}"><br><br>
+
+    <label>Bairro</label><br>
+    <input type="text" th:field="*{bairro}"><br><br>
+
+    <label>Logradouro</label><br>
+    <input type="text" th:field="*{logradouro}"><br><br>
+
+    <label>Número</label><br>
+    <input type="text" th:field="*{numero}"><br><br>
+
+    <label>Complemento (opcional)</label><br>
+    <input type="text" th:field="*{complemento}"><br><br>
 
     <button type="submit">Salvar</button>
     <a th:href="@{/negocios}">Cancelar</a>
