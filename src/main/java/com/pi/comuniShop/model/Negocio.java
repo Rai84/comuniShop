@@ -47,7 +47,7 @@ public class Negocio {
     private List<Catalogo> catalogos;
 
     // ============================
-    // ENDEREÇO DO NEGÓCIO
+    // ENDEREÇO
     // ============================
 
     @Column(nullable = false)
@@ -68,13 +68,20 @@ public class Negocio {
     @Column(nullable = false)
     private String numero;
 
-    @Column
-    private Double latitude;
+    private String complemento;
 
-    @Column
+    private Double latitude;
     private Double longitude;
 
-    private String complemento;
+    // ============================
+    // IMAGENS DO NEGÓCIO
+    // ============================
+
+    @Column(name = "logo_url")
+    private String logoUrl;
+
+    @Column(name = "painel_url")
+    private String painelUrl;
 
     // ============================
     // GETTERS E SETTERS
@@ -264,6 +271,14 @@ public class Negocio {
         this.numero = numero;
     }
 
+    public String getComplemento() {
+        return complemento;
+    }
+
+    public void setComplemento(String complemento) {
+        this.complemento = complemento;
+    }
+
     public Double getLatitude() {
         return latitude;
     }
@@ -280,11 +295,19 @@ public class Negocio {
         this.longitude = longitude;
     }
 
-    public String getComplemento() {
-        return complemento;
+    public String getLogoUrl() {
+        return logoUrl;
     }
 
-    public void setComplemento(String complemento) {
-        this.complemento = complemento;
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
+
+    public String getPainelUrl() {
+        return painelUrl;
+    }
+
+    public void setPainelUrl(String painelUrl) {
+        this.painelUrl = painelUrl;
     }
 }

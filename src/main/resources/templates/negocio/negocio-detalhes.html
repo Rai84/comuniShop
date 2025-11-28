@@ -1,628 +1,1062 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
-<head th:replace="~{fragments/head :: headFragment('Dashboard')}"></head>
+  <head th:replace="~{fragments/head :: headFragment('Dashboard')}"></head>
 
-<body class="px-4 ml-40 text-black">
-  <nav id="menu1" class="fixed top-0 left-0 flex flex-col items-start w-40 h-full px-4 py-6 text-white bg-zinc-600">
-    
-    <div class="flex gap-2.5 pb-5">
-      <button data-modal-target="modalPerfil" data-modal-toggle="modalPerfil" class="text-2xl">
-        <i class="bi bi-person-circle"></i> 
-      </button>
-      <div class="flex flex-col">
-        <span th:text="${negocio.nome}"></span>
-        <a class="text-[0.7rem] cursor-pointer"><strong>Plano: </strong><span th:text="${negocio.plano}"></span></a>
+  <body class="px-4 ml-40 text-black">
+    <!-- ====================== SIDEBAR ESQUERDA ====================== -->
+    <nav
+      id="menu1"
+      class="fixed top-0 left-0 flex flex-col items-start w-40 h-full px-4 py-6 text-white bg-zinc-600"
+    >
+      <div class="flex gap-2.5 pb-5">
+        <button
+          data-modal-target="modalPerfil"
+          data-modal-toggle="modalPerfil"
+          class="text-2xl"
+        >
+          <i class="bi bi-person-circle"></i>
+        </button>
+        <div class="flex flex-col">
+          <span th:text="${negocio.nome}"></span>
+          <a class="text-[0.7rem] cursor-pointer">
+            <strong>Plano: </strong><span th:text="${negocio.plano}"></span>
+          </a>
+        </div>
       </div>
-    </div>
-    
-    <div class="flex flex-col items-start gap-4 mt-10">
-      <button data-modal-target="modalNovoProduto" data-modal-toggle="modalNovoProduto"><i class="text-[1rem] bi bi-plus-circle"></i> Novo item</button>
-      <button data-modal-target="modalChat" data-modal-toggle="modalChat"><i class="text-[1rem] bi bi-chat-left-text"></i> Chat</button>
-      <button data-modal-target="modalNotificacao" data-modal-toggle="modalNotificacao"><i class="text-[1rem] bi bi-bell"></i> Notificações</button>
-      <button data-modal-target="modalMapa" data-modal-toggle="modalMapa"><i class="text-[1rem] bi bi-map"></i> Ver Mapa</button>
-      <a th:href="@{/logout}" class="absolute bottom-2.5 flex items-center gap-2.5"><i class="text-[1rem] bi bi-box-arrow-left"></i> Sair</a>
-    </div>
-    
-  </nav>
 
-  <nav class="fixed top-0 right-0 flex items-center justify-between px-4 text-white left-40 h-7 bg-destaque z-10">
-    <!-- <button data-modal-target="modalPerfil" data-modal-toggle="modalPerfil" class="flex items-center">
-      <i class="pr-1 bi bi-person-circle"></i>
-      <span th:text="${negocio.nome}" class="pr-1"></span>
-      <span th:text="' (' + ${negocio.plano} + ')'"></span>
-    </button> -->
-    <div class="flex gap-5">
-      <strong>Status da Loja:</strong> <span id="statusLoja"></span>
-      <!-- <button data-modal-target="modalChat" data-modal-toggle="modalChat"><i class="bi bi-chat-left-text"></i></button>
-      <button data-modal-target="modalNotificacao" data-modal-toggle="modalNotificacao"><i class="bi bi-bell"></i></button> -->
-    </div>
-  </nav>
-
-  <div class="absolute p-4 mt-10 rounded-lg shadow-lg left-44 right-[23rem] bg-zinc-600 text-white">
-    <div class="flex items-center justify-between mb-4">
-      <h1 class="text-xl font-semibold">Catálogo</h1>
-      <button data-modal-target="modalNovoProduto" data-modal-toggle="modalNovoProduto"
-              class="flex items-center gap-2 px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
-        <i class="bi bi-plus-circle"></i> Novo Produto
-      </button>
-    </div>
-    <div class="overflow-x-auto rounded-lg shadow">
-      <table class="min-w-full text-sm text-left text-gray-200">
-        <thead class="text-gray-100 uppercase bg-zinc-700">
-          <tr>
-            <th class="px-4 py-3">ID</th>
-            <th class="px-4 py-3">Produto</th>
-            <th class="px-4 py-3">Descrição</th>
-            <th class="px-4 py-3">Preço (R$)</th>
-            <th class="px-4 py-3 text-center">Duração (minutos)</th>
-            <th class="px-4 py-3 text-center">Disponível</th>
-            <th class="px-4 py-3 text-center">Ações</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr th:each="p : ${itens}" class="border-b border-zinc-500 hover:bg-zinc-700">
-            <td class="px-4 py-3" th:text="${p.id}"></td>
-            <td class="px-4 py-3 font-semibold" th:text="${p.nome}"></td>
-            <td class="px-4 py-3 truncate max-w-[200px]" th:text="${p.descricao}"></td>
-            <td class="px-4 py-3" th:text="${#numbers.formatDecimal(p.preco, 1, 2)}"></td>
-            <td class="px-4 py-3 text-center" th:text="${p.duracaoMinutos != null} ? ${p.duracaoMinutos} : '—'"></td>
-            <td class="px-4 py-3 text-center">
-              <span th:text="${p.disponivel} ? 'Sim' : 'Não'" 
-                    th:classappend="${p.disponivel} ? 'text-green-400' : 'text-red-400'"></span>
-            </td>
-            <td class="px-4 py-3 space-x-2 text-center">
-              <a th:data-modal-target="'modalEditarProduto_' + ${p.id}" 
-                th:data-modal-toggle="'modalEditarProduto_' + ${p.id}"
-                class="px-2 py-1 text-blue-400 rounded cursor-pointer hover:underline">
-                Editar
-              </a>
-              <a th:href="@{/catalogo/excluir/{id}(id=${p.id})}" 
-                 class="px-2 py-1 text-red-400 rounded hover:underline"
-                 onclick="return confirm('Deseja excluir este produto?')">Excluir
-              </a>
-              <a th:data-modal-target="'modalVerProduto_' + ${p.id}" 
-                th:data-modal-toggle="'modalVerProduto_' + ${p.id}"
-                class="px-2 py-1 rounded cursor-pointer text-amber-400 hover:underline">
-                Ver
-              </a>
-              
-            </td>
-          </tr>
-          <tr th:if="${#lists.isEmpty(itens)}" class="text-center">
-            <td colspan="6" class="px-4 py-6 text-gray-300">Nenhum produto cadastrado ainda.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-
-
-  <div class="absolute flex flex-col gap-6 mt-10 right-5">
-    <div class="flex flex-col w-80 gap-4 p-5 text-white rounded-2xl shadow-xl bg-gradient-to-br from-zinc-700 to-zinc-600">
-    <h3 class="text-lg font-semibold text-center">Horário de Funcionamento</h3>
-    <div class="flex flex-col gap-3">
-      <label class="flex flex-col text-sm">
-        <span class="mb-1 font-medium flex items-center gap-1">
-          <i class="bi bi-clock-history text-destaque"></i>
-          Abertura
-        </span>
-        <input
-          id="horaAbertura"
-          type="time"
-          th:value="${negocio.horaAbertura}"
-          onchange="editarCampo('horaAbertura', this.value)"
-          class="px-3 py-2 rounded-lg bg-zinc-600 border border-zinc-800 focus:border-destaque focus:ring-1 focus:ring-destaque outline-none"
+      <div class="flex flex-col items-start gap-4 mt-10">
+        <button
+          data-modal-target="modalNovoProduto"
+          data-modal-toggle="modalNovoProduto"
         >
-      </label>
-      <label class="flex flex-col text-sm">
-        <span class="mb-1 font-medium flex items-center gap-1">
-          <i class="bi bi-alarm text-destaque"></i>
-          Fechamento
-        </span>
-        <input
-          id="horaFechamento"
-          type="time"
-          th:value="${negocio.horaFechamento}"
-          onchange="editarCampo('horaFechamento', this.value)"
-          class="px-3 py-2 rounded-lg bg-zinc-600 border border-zinc-800 focus:border-destaque focus:ring-1 focus:ring-destaque outline-none"
+          <i class="text-[1rem] bi bi-plus-circle"></i> Novo item
+        </button>
+        <button data-modal-target="modalChat" data-modal-toggle="modalChat">
+          <i class="text-[1rem] bi bi-chat-left-text"></i> Chat
+        </button>
+        <button
+          data-modal-target="modalNotificacao"
+          data-modal-toggle="modalNotificacao"
         >
-      </label>
-    </div>
-  </div>
+          <i class="text-[1rem] bi bi-bell"></i> Notificações
+        </button>
+        <button data-modal-target="modalMapa" data-modal-toggle="modalMapa">
+          <i class="text-[1rem] bi bi-map"></i> Ver Mapa
+        </button>
 
-
-  <div class="flex flex-col w-80 gap-4 p-5 text-white rounded-2xl shadow-xl bg-gradient-to-br from-zinc-600 to-zinc-600">
-    <h3 class="text-lg font-semibold text-center">Recursos Ativos</h3>
-    <div class="flex flex-col gap-3 text-sm">
-      <!-- Catálogo -->
-      <label class="flex items-center justify-between bg-zinc-600 px-3 py-2 rounded-lg border border-zinc-800">
-        <span class="flex items-center gap-2 font-medium">
-          <i class="bi bi-bag text-destaque"></i>
-          Catálogo ativo
-        </span>
-        <input
-          type="checkbox"
-          id="catalogoAtivo"
-          onclick="editarCampo('catalogoAtivo', this.checked)"
-          th:checked="${negocio.catalogoAtivo}"
-          class="w-5 h-5 accent-destaque"
+        <a
+          th:href="@{/logout}"
+          class="absolute bottom-2.5 flex items-center gap-2.5"
         >
-      </label>
-      <!-- Agendamento -->
-      <label class="flex items-center justify-between bg-zinc-600 px-3 py-2 rounded-lg border border-zinc-800">
-        <span class="flex items-center gap-2 font-medium">
-          <i class="bi bi-calendar-check text-blue-400"></i>
-          Agendamento ativo
-        </span>
-        <input
-          type="checkbox"
-          id="agendamentoAtivo"
-          onclick="editarCampo('agendamentoAtivo', this.checked)"
-          th:checked="${negocio.agendamentoAtivo}"
-          class="w-5 h-5 accent-blue-400"
-        >
-      </label>
-      <!-- Entregas -->
-      <label class="flex items-center justify-between bg-zinc-600 px-3 py-2 rounded-lg border border-zinc-800">
-        <span class="flex items-center gap-2 font-medium">
-          <i class="bi bi-truck text-green-400"></i>
-          Entregas ativas
-        </span>
-        <input
-          type="checkbox"
-          id="entregasAtivas"
-          onclick="editarCampo('entregasAtivas', this.checked)"
-          th:checked="${negocio.entregasAtivas}"
-          class="w-5 h-5 accent-green-400"
-        >
-      </label>
-    </div>
-  </div>
+          <i class="text-[1rem] bi bi-box-arrow-left"></i> Sair
+        </a>
+      </div>
+    </nav>
 
+    <!-- ====================== TOPO ====================== -->
+    <nav
+      class="fixed top-0 right-0 flex items-center justify-between px-4 text-white left-40 h-7 bg-destaque z-10"
+    >
+      <div class="flex gap-5">
+        <strong>Status da Loja:</strong>
+        <span id="statusLoja"></span>
+      </div>
+    </nav>
 
-    <div class="flex flex-col items-start justify-center p-4 space-y-1 text-white rounded-lg shadow-lg w-80 bg-zinc-600">
-      <h3 class="w-full mb-1 text-lg font-semibold text-center">
-        Endereço <i class="bi bi-geo-alt-fill"></i>
-      </h3>
-
-      <p class="text-sm"><strong>CEP:</strong> <span th:text="${negocio.cep}"></span></p>
-      <p class="text-sm"><strong>Rua:</strong> <span th:text="${negocio.logradouro}"></span></p>
-      <p class="text-sm"><strong>Número:</strong> <span th:text="${negocio.numero}"></span></p>
-      <p class="text-sm"><strong>Bairro:</strong> <span th:text="${negocio.bairro}"></span></p>
-      <p class="text-sm"><strong>Cidade:</strong> <span th:text="${negocio.cidade}"></span></p>
-      <p class="text-sm"><strong>Estado:</strong> <span th:text="${negocio.estado}"></span></p>
-
-      <!-- NOVO -->
-    <p><strong>Latitude:</strong> <span th:text="${negocio.latitude}"></span></p>
-    <p><strong>Longitude:</strong> <span th:text="${negocio.longitude}"></span></p>
-    </div>
-
-  </div>
-  
-
-
-
-
-
-
-  
-  
-
-
-  <!-- ====================== MODAL 1: PERFIL ====================== -->
-  <div id="modalPerfil" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50">
-    <div class="top-0 w-full max-w-md p-6 bg-white rounded-lg shadow left-40">
+    <!-- ====================== LISTA DE PRODUTOS ====================== -->
+    <div
+      class="absolute p-4 mt-10 rounded-lg shadow-lg left-44 right-[23rem] bg-zinc-600 text-white"
+    >
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Informações do Perfil</h2>
-        <a th:href="@{'/negocios/' + ${negocio.id} + '/editar'}" class="text-green-600">Editar</a>
+        <h1 class="text-xl font-semibold">Catálogo</h1>
+        <button
+          data-modal-target="modalNovoProduto"
+          data-modal-toggle="modalNovoProduto"
+          class="flex items-center gap-2 px-3 py-1 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+        >
+          <i class="bi bi-plus-circle"></i> Novo Produto
+        </button>
       </div>
-        <p><strong>Plano:</strong> <span th:text="${negocio.plano}"></span></p>
-        <p><strong>Nome:</strong> <span th:text="${negocio.nome}"></span></p>
-        <p><strong>Descrição:</strong> <span th:text="${negocio.descricao}"></span></p>
-        <p><strong>Telefone Comercial:</strong> <span th:text="${negocio.telefoneComercial}"></span></p>
-        <p><strong>Email Comercial:</strong> <span th:text="${negocio.emailComercial}"></span></p>
-      <div class="flex justify-end">
-        <button data-modal-hide="modalPerfil" class="px-4 py-2 text-white bg-blue-600 rounded-lg">Fechar</button>
-      </div>
-    </div>
-  </div>
 
-  <!-- ====================== MODAL 2: CHAT ====================== -->
-  <div id="modalChat" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50">
-    <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-      <h2 class="mb-4 text-xl font-semibold">Mensagens</h2>
-      <div class="p-3 mb-4 overflow-y-auto border rounded-lg h-60">
-        <p><strong>Cliente:</strong> Olá! Vocês estão abertos hoje?</p>
-        <p><strong>Você:</strong> Sim! Até as 18h 😊</p>
-      </div>
-      <form class="flex gap-2">
-        <input type="text" class="flex-1 p-2 border border-gray-300 rounded-lg" placeholder="Digite uma mensagem..." />
-        <button type="button" class="px-4 py-2 text-white bg-blue-600 rounded-lg">Enviar</button>
-      </form>
-      <div class="mt-3 text-right">
-        <button data-modal-hide="modalChat" class="text-sm text-gray-600 hover:underline">Fechar</button>
-      </div>
-    </div>
-  </div>
+      <div class="overflow-x-auto rounded-lg shadow">
+        <table class="min-w-full text-sm text-left text-gray-200">
+          <thead class="text-gray-100 uppercase bg-zinc-700">
+            <tr>
+              <th class="px-4 py-3">ID</th>
+              <th class="px-4 py-3">Produto</th>
+              <th class="px-4 py-3">Descrição</th>
+              <th class="px-4 py-3">Preço (R$)</th>
+              <th class="px-4 py-3 text-center">Duração (min)</th>
+              <th class="px-4 py-3 text-center">Disponível</th>
+              <th class="px-4 py-3 text-center">Ações</th>
+            </tr>
+          </thead>
 
-  <!-- ====================== MODAL 3: NOTIFICAÇÕES ====================== -->
-  <div id="modalNotificacao" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50">
-    <div class="bg-white rounded-lg shadow w-full max-w-2xl h-[80vh] overflow-hidden flex flex-col">
-      <div class="flex items-center justify-between p-4 border-b">
-        <h3 class="text-lg font-semibold text-gray-900">Notificações</h3>
-        <button data-modal-hide="modalNotificacao" class="text-2xl text-gray-500 hover:text-gray-700">&times;</button>
-      </div>
-      <div class="p-4 space-y-3 overflow-y-auto">
-        <div class="pb-2 border-b">
-          <p class="font-semibold">Novo pedido recebido!</p>
-          <p class="text-sm text-gray-600">Cliente: Maria Oliveira — há 5 minutos</p>
-        </div>
-        <div class="pb-2 border-b">
-          <p class="font-semibold">Produto atualizado com sucesso.</p>
-          <p class="text-sm text-gray-600">Ontem às 14:23</p>
-        </div>
-        <p>...</p>
-      </div>
-      <div class="flex justify-end p-3 border-t">
-        <button data-modal-hide="modalNotificacao" class="px-4 py-2 text-white rounded-lg bg-amber-500">Fechar</button>
+          <tbody>
+            <tr
+              th:each="p : ${itens}"
+              class="border-b border-zinc-500 hover:bg-zinc-700"
+            >
+              <td class="px-4 py-3" th:text="${p.id}"></td>
+              <td class="px-4 py-3 font-semibold" th:text="${p.nome}"></td>
+              <td
+                class="px-4 py-3 truncate max-w-[200px]"
+                th:text="${p.descricao}"
+              ></td>
+              <td
+                class="px-4 py-3"
+                th:text="${#numbers.formatDecimal(p.preco, 1, 2)}"
+              ></td>
+
+              <td class="px-4 py-3 text-center">
+                <span
+                  th:text="${p.duracaoMinutos != null} ? ${p.duracaoMinutos} : '—'"
+                ></span>
+              </td>
+
+              <td class="px-4 py-3 text-center">
+                <span
+                  th:text="${p.disponivel} ? 'Sim' : 'Não'"
+                  th:classappend="${p.disponivel} ? 'text-green-400' : 'text-red-400'"
+                ></span>
+              </td>
+
+              <td class="px-4 py-3 space-x-2 text-center">
+                <a
+                  th:data-modal-target="'modalEditarProduto_' + ${p.id}"
+                  th:data-modal-toggle="'modalEditarProduto_' + ${p.id}"
+                  class="px-2 py-1 text-blue-400 rounded cursor-pointer hover:underline"
+                >
+                  Editar
+                </a>
+
+                <a
+                  th:href="@{/catalogo/excluir/{id}(id=${p.id})}"
+                  class="px-2 py-1 text-red-400 rounded hover:underline"
+                  onclick="return confirm('Deseja excluir este produto?')"
+                >
+                  Excluir
+                </a>
+
+                <a
+                  th:data-modal-target="'modalVerProduto_' + ${p.id}"
+                  th:data-modal-toggle="'modalVerProduto_' + ${p.id}"
+                  class="px-2 py-1 rounded cursor-pointer text-amber-400 hover:underline"
+                >
+                  Ver
+                </a>
+              </td>
+            </tr>
+
+            <tr th:if="${#lists.isEmpty(itens)}" class="text-center">
+              <td colspan="6" class="px-4 py-6 text-gray-300">
+                Nenhum produto cadastrado ainda.
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </div>
+
+    <!-- ====================== PAINÉIS LATERAIS DIREITA ====================== -->
+    <div class="absolute flex flex-col gap-6 mt-10 right-5">
+      <!-- HORÁRIO -->
+      <div
+        class="flex flex-col w-80 gap-4 p-5 text-white rounded-2xl shadow-xl bg-gradient-to-br from-zinc-700 to-zinc-600"
+      >
+        <h3 class="text-lg font-semibold text-center">
+          Horário de Funcionamento
+        </h3>
+
+        <div class="flex flex-col gap-3">
+          <label class="flex flex-col text-sm">
+            <span class="mb-1 font-medium flex items-center gap-1">
+              <i class="bi bi-clock-history text-destaque"></i> Abertura
+            </span>
+
+            <input
+              id="horaAbertura"
+              type="time"
+              th:value="${negocio.horaAbertura}"
+              onchange="editarCampo('horaAbertura', this.value)"
+              class="px-3 py-2 rounded-lg bg-zinc-600 border border-zinc-800 focus:border-destaque focus:ring-1 focus:ring-destaque outline-none"
+            />
+          </label>
+
+          <label class="flex flex-col text-sm">
+            <span class="mb-1 font-medium flex items-center gap-1">
+              <i class="bi bi-alarm text-destaque"></i> Fechamento
+            </span>
+
+            <input
+              id="horaFechamento"
+              type="time"
+              th:value="${negocio.horaFechamento}"
+              onchange="editarCampo('horaFechamento', this.value)"
+              class="px-3 py-2 rounded-lg bg-zinc-600 border border-zinc-800 focus:border-destaque focus:ring-1 focus:ring-destaque outline-none"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- RECURSOS ATIVOS -->
+      <div
+        class="flex flex-col w-80 gap-4 p-5 text-white rounded-2xl shadow-xl bg-gradient-to-br from-zinc-600 to-zinc-600"
+      >
+        <h3 class="text-lg font-semibold text-center">Recursos Ativos</h3>
+
+        <div class="flex flex-col gap-3 text-sm">
+          <!-- Catálogo -->
+          <label
+            class="flex items-center justify-between bg-zinc-600 px-3 py-2 rounded-lg border border-zinc-800"
+          >
+            <span class="flex items-center gap-2 font-medium">
+              <i class="bi bi-bag text-destaque"></i> Catálogo ativo
+            </span>
+            <input
+              type="checkbox"
+              id="catalogoAtivo"
+              onclick="editarCampo('catalogoAtivo', this.checked)"
+              th:checked="${negocio.catalogoAtivo}"
+              class="w-5 h-5 accent-destaque"
+            />
+          </label>
+
+          <!-- Agendamento -->
+          <label
+            class="flex items-center justify-between bg-zinc-600 px-3 py-2 rounded-lg border border-zinc-800"
+          >
+            <span class="flex items-center gap-2 font-medium">
+              <i class="bi bi-calendar-check text-blue-400"></i> Agendamento
+              ativo
+            </span>
+            <input
+              type="checkbox"
+              id="agendamentoAtivo"
+              onclick="editarCampo('agendamentoAtivo', this.checked)"
+              th:checked="${negocio.agendamentoAtivo}"
+              class="w-5 h-5 accent-blue-400"
+            />
+          </label>
+
+          <!-- Entregas -->
+          <label
+            class="flex items-center justify-between bg-zinc-600 px-3 py-2 rounded-lg border border-zinc-800"
+          >
+            <span class="flex items-center gap-2 font-medium">
+              <i class="bi bi-truck text-green-400"></i> Entregas ativas
+            </span>
+            <input
+              type="checkbox"
+              id="entregasAtivas"
+              onclick="editarCampo('entregasAtivas', this.checked)"
+              th:checked="${negocio.entregasAtivas}"
+              class="w-5 h-5 accent-green-400"
+            />
+          </label>
+        </div>
+      </div>
+
+      <!-- ENDEREÇO -->
+      <div
+        class="flex flex-col items-start justify-center p-4 space-y-1 text-white rounded-lg shadow-lg w-80 bg-zinc-600"
+      >
+        <h3 class="w-full mb-1 text-lg font-semibold text-center">
+          Endereço <i class="bi bi-geo-alt-fill"></i>
+        </h3>
+
+        <p class="text-sm">
+          <strong>CEP:</strong> <span th:text="${negocio.cep}"></span>
+        </p>
+        <p class="text-sm">
+          <strong>Rua:</strong> <span th:text="${negocio.logradouro}"></span>
+        </p>
+        <p class="text-sm">
+          <strong>Número:</strong> <span th:text="${negocio.numero}"></span>
+        </p>
+        <p class="text-sm">
+          <strong>Bairro:</strong> <span th:text="${negocio.bairro}"></span>
+        </p>
+        <p class="text-sm">
+          <strong>Cidade:</strong> <span th:text="${negocio.cidade}"></span>
+        </p>
+        <p class="text-sm">
+          <strong>Estado:</strong> <span th:text="${negocio.estado}"></span>
+        </p>
+
+        <p>
+          <strong>Latitude:</strong> <span th:text="${negocio.latitude}"></span>
+        </p>
+        <p>
+          <strong>Longitude:</strong>
+          <span th:text="${negocio.longitude}"></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ====================== MODAL 1: PERFIL ====================== -->
+    <div
+      id="modalPerfil"
+      tabindex="-1"
+      aria-hidden="true"
+      class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50"
+    >
+      <div class="top-0 w-full max-w-3xl p-6 bg-white rounded-lg shadow">
+        <!-- Cabeçalho -->
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Informações do Negócio</h2>
+          <a
+            th:href="@{'/negocios/' + ${negocio.id} + '/editar'}"
+            class="text-green-600"
+            >Editar</a
+          >
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- LOGO + PAINEL LADO A LADO -->
+        <!-- ===================================================== -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          <!-- =================== LOGO =================== -->
+          <div>
+            <h3 class="text-lg font-semibold mb-1">Logo</h3>
+
+            <div class="relative flex justify-center mb-2 group">
+              <img
+                id="previewLogo"
+                th:src="${negocio.logoUrl != null ? negocio.logoUrl : '/img/default-logo.png'}"
+                class="w-32 h-32 rounded-full object-cover border transition group-hover:brightness-50"
+              />
+
+              <!-- Hover overlay -->
+              <span
+                class="absolute inset-0 flex items-center justify-center text-white text-sm opacity-0 group-hover:opacity-100 transition"
+              >
+                Trocar imagem
+              </span>
+            </div>
+
+            <!-- Upload -->
+            <form
+              th:action="@{'/negocios/' + ${negocio.id} + '/upload-logo'}"
+              method="post"
+              enctype="multipart/form-data"
+              class="flex flex-col gap-2"
+            >
+              <input
+                type="file"
+                name="logo"
+                accept="image/*"
+                onchange="previewImage(this, 'previewLogo')"
+                class="block w-full text-sm"
+              />
+
+              <button
+                type="submit"
+                class="px-3 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700"
+              >
+                Enviar nova logo
+              </button>
+            </form>
+
+            <!-- Remover -->
+            <form
+              th:action="@{'/negocios/' + ${negocio.id} + '/remover-logo'}"
+              method="post"
+              class="mt-2"
+            >
+              <button
+                type="submit"
+                class="px-2 py-1 text-xs text-white bg-red-600 rounded hover:bg-red-700"
+              >
+                Remover logo
+              </button>
+            </form>
+          </div>
+
+          <!-- =================== PAINEL =================== -->
+          <div>
+            <h3 class="text-lg font-semibold mb-1">Imagem de Painel</h3>
+
+            <div class="relative mb-2 group">
+              <img
+                id="previewPainel"
+                th:src="${negocio.painelUrl != null ? negocio.painelUrl : '/img/default-painel.png'}"
+                class="w-full h-32 md:h-40 object-cover rounded border transition group-hover:brightness-50"
+              />
+
+              <!-- Hover overlay -->
+              <span
+                class="absolute inset-0 flex items-center justify-center text-white text-sm opacity-0 group-hover:opacity-100 transition"
+              >
+                Trocar imagem
+              </span>
+            </div>
+
+            <!-- Upload -->
+            <form
+              th:action="@{'/negocios/' + ${negocio.id} + '/upload-painel'}"
+              method="post"
+              enctype="multipart/form-data"
+              class="flex flex-col gap-2"
+            >
+              <input
+                type="file"
+                name="painel"
+                accept="image/*"
+                onchange="previewImage(this, 'previewPainel')"
+                class="block w-full text-sm"
+              />
+
+              <button
+                type="submit"
+                class="px-3 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700"
+              >
+                Enviar nova imagem
+              </button>
+            </form>
+
+            <!-- Remover -->
+            <form
+              th:action="@{'/negocios/' + ${negocio.id} + '/remover-painel'}"
+              method="post"
+              class="mt-2"
+            >
+              <button
+                type="submit"
+                class="px-2 py-1 text-xs text-white bg-red-600 rounded hover:bg-red-700"
+              >
+                Remover painel
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- ===================================================== -->
+        <!-- DADOS DO NEGÓCIO -->
+        <!-- ===================================================== -->
+        <div class="space-y-1 mb-4">
+          <p>
+            <strong>Plano:</strong> <span th:text="${negocio.plano}"></span>
+          </p>
+          <p><strong>Nome:</strong> <span th:text="${negocio.nome}"></span></p>
+          <p>
+            <strong>Descrição:</strong>
+            <span th:text="${negocio.descricao}"></span>
+          </p>
+          <p>
+            <strong>Telefone Comercial:</strong>
+            <span th:text="${negocio.telefoneComercial}"></span>
+          </p>
+          <p>
+            <strong>Email Comercial:</strong>
+            <span th:text="${negocio.emailComercial}"></span>
+          </p>
+        </div>
+
+        <!-- BOTÃO FECHAR -->
+        <div class="flex justify-end gap-3 mt-4">
+          <button
+            data-modal-hide="modalPerfil"
+            type="button"
+            class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================== MODAL 2: CHAT ====================== -->
+    <div
+      id="modalChat"
+      tabindex="-1"
+      aria-hidden="true"
+      class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50"
+    >
+      <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
+        <h2 class="mb-4 text-xl font-semibold">Mensagens</h2>
+
+        <div class="p-3 mb-4 overflow-y-auto border rounded-lg h-60">
+          <p><strong>Cliente:</strong> Olá! Vocês estão abertos hoje?</p>
+          <p><strong>Você:</strong> Sim! Até as 18h 😊</p>
+        </div>
+
+        <form class="flex gap-2">
+          <input
+            type="text"
+            class="flex-1 p-2 border border-gray-300 rounded-lg"
+            placeholder="Digite uma mensagem..."
+          />
+          <button
+            type="button"
+            class="px-4 py-2 text-white bg-blue-600 rounded-lg"
+          >
+            Enviar
+          </button>
+        </form>
+
+        <div class="mt-3 text-right">
+          <button
+            data-modal-hide="modalChat"
+            class="text-sm text-gray-600 hover:underline"
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================== MODAL 3: NOTIFICAÇÕES ====================== -->
+    <div
+      id="modalNotificacao"
+      tabindex="-1"
+      aria-hidden="true"
+      class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50"
+    >
+      <div
+        class="bg-white rounded-lg shadow w-full max-w-2xl h-[80vh] overflow-hidden flex flex-col"
+      >
+        <div class="flex items-center justify-between p-4 border-b">
+          <h3 class="text-lg font-semibold text-gray-900">Notificações</h3>
+          <button
+            data-modal-hide="modalNotificacao"
+            class="text-2xl text-gray-500 hover:text-gray-700"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div class="p-4 space-y-3 overflow-y-auto">
+          <div class="pb-2 border-b">
+            <p class="font-semibold">Novo pedido recebido!</p>
+            <p class="text-sm text-gray-600">
+              Cliente: Maria Oliveira — há 5 minutos
+            </p>
+          </div>
+
+          <div class="pb-2 border-b">
+            <p class="font-semibold">Produto atualizado com sucesso.</p>
+            <p class="text-sm text-gray-600">Ontem às 14:23</p>
+          </div>
+
+          <p>...</p>
+        </div>
+
+        <div class="flex justify-end p-3 border-t">
+          <button
+            data-modal-hide="modalNotificacao"
+            class="px-4 py-2 text-white rounded-lg bg-amber-500"
+          >
+            Fechar
+          </button>
+        </div>
+      </div>
+    </div>
 
     <!-- ======================= MODAL NOVO PRODUTO ======================= -->
-  <div id="modalNovoProduto" tabindex="-1" aria-hidden="true" 
-       class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50">
-    <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
-      <h2 class="mb-4 text-xl font-semibold text-gray-900">Novo Produto</h2>
+    <div
+      id="modalNovoProduto"
+      tabindex="-1"
+      aria-hidden="true"
+      class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50"
+    >
+      <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
+        <h2 class="mb-4 text-xl font-semibold text-gray-900">Novo Produto</h2>
 
-      <form th:action="@{/catalogo/salvar}" method="post" enctype="multipart/form-data" class="space-y-4">
-        <!-- ID do Negócio -->
-        <input type="hidden" name="negocio.id" th:value="${negocio.id}" />
+        <form
+          th:action="@{/catalogo/salvar}"
+          method="post"
+          enctype="multipart/form-data"
+          class="space-y-4"
+        >
+          <input type="hidden" name="negocio.id" th:value="${negocio.id}" />
 
-        <!-- Nome -->
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Nome</label>
-          <input type="text" name="nome" required 
-                 class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
-        </div>
-
-        <!-- Descrição -->
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Descrição</label>
-          <textarea name="descricao" rows="3" required 
-                    class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"></textarea>
-        </div>
-
-        <!-- Preço -->
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Preço</label>
-          <input type="number" name="preco" step="0.01" min="0" required 
-                 class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
-        </div>
-
-        <div th:if="${negocio.agendamentoAtivo}">
-  <label for="duracao" class="block mb-1 text-sm font-medium text-gray-700">
-    Duração (minutos)
-  </label>
-  <input type="number" id="duracao" name="duracaoMinutos" min="5" step="5"
-         class="w-full p-2 border rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
-         placeholder="Ex: 30">
-</div>
-
-
-        <!-- Upload de imagens -->
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Imagens</label>
-          <input type="file" name="files" multiple 
-                 class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-gray-50">
-        </div>
-
-        <!-- Botões -->
-        <div class="flex justify-end gap-3 pt-3">
-          <button type="button" data-modal-hide="modalNovoProduto"
-                  class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">
-            Cancelar
-          </button>
-          <button type="submit" 
-                  class="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700">
-            Salvar
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ========== MODAL DE EDIÇÃO DE PRODUTO (sem th:object) ========== -->
-  <div th:each="p : ${itens}" 
-       th:id="'modalEditarProduto_' + ${p.id}" 
-       tabindex="-1" 
-       aria-hidden="true" 
-       class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50">
-
-    <div class="w-full max-w-3xl p-6 bg-white rounded-lg shadow-lg overflow-y-auto max-h-[90vh]">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold text-gray-900">Editar Produto</h2>
-        <button type="button" 
-                th:data-modal-hide="'modalEditarProduto_' + ${p.id}" 
-                class="text-2xl leading-none text-gray-500 hover:text-gray-700">&times;</button>
-      </div>
-
-      <form th:action="@{/catalogo/salvar}" method="post" enctype="multipart/form-data" class="space-y-4">
-
-        <!-- IDs ocultos -->
-        <input type="hidden" name="id" th:value="${p.id}">
-        <input type="hidden" name="negocio.id" th:value="${negocio.id}">
-
-        <!-- Nome -->
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Nome</label>
-          <input type="text" name="nome" th:value="${p.nome}" required 
-                 class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
-        </div>
-
-        <!-- Descrição -->
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Descrição</label>
-          <textarea name="descricao" rows="3" th:text="${p.descricao}"
-                    class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"></textarea>
-        </div>
-
-        <!-- Preço e disponibilidade -->
-        <div class="grid grid-cols-2 gap-4">
           <div>
-            <label class="block mb-1 text-sm font-medium text-gray-700">Preço (R$)</label>
-            <input type="number" name="preco" step="0.01" th:value="${p.preco}" required 
-                   class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500">
+            <label class="block mb-1 text-sm font-medium text-gray-700"
+              >Nome</label
+            >
+            <input
+              type="text"
+              name="nome"
+              required
+              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+            />
           </div>
 
-          <div class="flex items-center mt-6">
-            <input id="disponivel" type="checkbox" name="disponivel" th:checked="${p.disponivel}"
-                   class="w-4 h-4 border-gray-300 rounded text-emerald-600 focus:ring-emerald-500">
-            <label for="disponivel" class="ml-2 text-sm text-gray-700">Disponível</label>
+          <div>
+            <label class="block mb-1 text-sm font-medium text-gray-700"
+              >Descrição</label
+            >
+            <textarea
+              name="descricao"
+              rows="3"
+              required
+              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+            ></textarea>
           </div>
+
+          <div>
+            <label class="block mb-1 text-sm font-medium text-gray-700"
+              >Preço</label
+            >
+            <input
+              type="number"
+              name="preco"
+              step="0.01"
+              min="0"
+              required
+              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+
+          <div th:if="${negocio.agendamentoAtivo}">
+            <label class="block mb-1 text-sm font-medium text-gray-700"
+              >Duração (minutos)</label
+            >
+            <input
+              type="number"
+              name="duracaoMinutos"
+              min="5"
+              step="5"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-emerald-500 focus:border-emerald-500"
+              placeholder="Ex: 30"
+            />
+          </div>
+
+          <div>
+            <label class="block mb-1 text-sm font-medium text-gray-700"
+              >Imagens</label
+            >
+            <input
+              type="file"
+              name="files"
+              multiple
+              class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+            />
+          </div>
+
+          <div class="flex justify-end gap-3 pt-3">
+            <button
+              type="button"
+              data-modal-hide="modalNovoProduto"
+              class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              class="px-4 py-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
+            >
+              Salvar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========== MODAL DE EDIÇÃO DE PRODUTO ========== -->
+    <div
+      th:each="p : ${itens}"
+      th:id="'modalEditarProduto_' + ${p.id}"
+      class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50"
+    >
+      <div
+        class="w-full max-w-3xl p-6 bg-white rounded-lg shadow-lg overflow-y-auto max-h-[90vh]"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold text-gray-900">Editar Produto</h2>
+          <button
+            type="button"
+            th:data-modal-hide="'modalEditarProduto_' + ${p.id}"
+            class="text-2xl leading-none text-gray-500 hover:text-gray-700"
+          >
+            &times;
+          </button>
         </div>
 
-        <hr class="my-4">
+        <form
+          th:action="@{/catalogo/salvar}"
+          method="post"
+          enctype="multipart/form-data"
+          class="space-y-4"
+        >
+          <input type="hidden" name="id" th:value="${p.id}" />
+          <input type="hidden" name="negocio.id" th:value="${negocio.id}" />
 
-        <!-- IMAGENS EXISTENTES -->
-        <h3 class="font-semibold text-gray-800">Imagens do produto</h3>
-        <div th:if="${p.imagens != null and !p.imagens.isEmpty()}">
-          <div class="grid grid-cols-3 gap-4">
-            <div th:each="img : ${p.imagens}" class="relative p-2 bg-gray-100 border rounded-lg">
-              <img th:src="${img.url}" class="object-cover w-full h-32 border rounded-md">
-              <div class="absolute flex gap-1 top-1 right-1">
-                <a th:href="@{/catalogo/imagem/mover/{id}/up(id=${img.id})}" 
-                   class="px-2 py-1 text-xs text-white bg-gray-800 rounded hover:bg-gray-700">⬆</a>
-                <a th:href="@{/catalogo/imagem/mover/{id}/down(id=${img.id})}" 
-                   class="px-2 py-1 text-xs text-white bg-gray-800 rounded hover:bg-gray-700">⬇</a>
-              </div>
-              <div class="mt-1 text-xs text-center">
-                <span th:text="${img.principal} ? '⭐ Principal' : '—'"></span>
-              </div>
-              <div class="flex justify-center gap-2 mt-1">
-                <a th:href="@{/catalogo/imagem/principal/{id}(id=${img.id})}" 
-                   class="text-xs text-blue-600 hover:underline">Principal</a>
-                <a th:href="@{/catalogo/imagem/excluir/{id}(id=${img.id})}"
-                   onclick="return confirm('Excluir esta imagem?')" 
-                   class="text-xs text-red-600 hover:underline">Excluir</a>
+          <div>
+            <label class="block mb-1 text-sm font-medium text-gray-700"
+              >Nome</label
+            >
+            <input
+              type="text"
+              name="nome"
+              th:value="${p.nome}"
+              required
+              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+            />
+          </div>
+
+          <div>
+            <label class="block mb-1 text-sm font-medium text-gray-700"
+              >Descrição</label
+            >
+            <textarea
+              name="descricao"
+              rows="3"
+              th:text="${p.descricao}"
+              class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+            ></textarea>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label class="block mb-1 text-sm font-medium text-gray-700"
+                >Preço (R$)</label
+              >
+              <input
+                type="number"
+                name="preco"
+                step="0.01"
+                th:value="${p.preco}"
+                required
+                class="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500"
+              />
+            </div>
+
+            <div class="flex items-center mt-6">
+              <input
+                id="disponivel"
+                type="checkbox"
+                name="disponivel"
+                th:checked="${p.disponivel}"
+                class="w-4 h-4 border-gray-300 rounded text-emerald-600 focus:ring-emerald-500"
+              />
+              <label for="disponivel" class="ml-2 text-sm text-gray-700"
+                >Disponível</label
+              >
+            </div>
+          </div>
+
+          <hr class="my-4" />
+
+          <h3 class="font-semibold text-gray-800">Imagens do produto</h3>
+
+          <div th:if="${p.imagens != null and !p.imagens.isEmpty()}">
+            <div class="grid grid-cols-3 gap-4">
+              <div
+                th:each="img : ${p.imagens}"
+                class="relative p-2 bg-gray-100 border rounded-lg"
+              >
+                <img
+                  th:src="${img.url}"
+                  class="object-cover w-full h-32 border rounded-md"
+                />
+
+                <div class="absolute flex gap-1 top-1 right-1">
+                  <a
+                    th:href="@{/catalogo/imagem/mover/{id}/up(id=${img.id})}"
+                    class="px-2 py-1 text-xs text-white bg-gray-800 rounded"
+                    >⬆</a
+                  >
+
+                  <a
+                    th:href="@{/catalogo/imagem/mover/{id}/down(id=${img.id})}"
+                    class="px-2 py-1 text-xs text-white bg-gray-800 rounded"
+                    >⬇</a
+                  >
+                </div>
+
+                <div class="mt-1 text-xs text-center">
+                  <span
+                    th:text="${img.principal} ? '⭐ Principal' : '—'"
+                  ></span>
+                </div>
+
+                <div class="flex justify-center gap-2 mt-1">
+                  <a
+                    th:href="@{/catalogo/imagem/principal/{id}(id=${img.id})}"
+                    class="text-xs text-blue-600 hover:underline"
+                    >Principal</a
+                  >
+
+                  <a
+                    th:href="@{/catalogo/imagem/excluir/{id}(id=${img.id})}"
+                    onclick="return confirm('Excluir esta imagem?')"
+                    class="text-xs text-red-600 hover:underline"
+                    >Excluir</a
+                  >
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div th:if="${p.imagens == null or p.imagens.isEmpty()}" class="text-sm text-gray-500">
-          Nenhuma imagem cadastrada.
-        </div>
+          <div
+            th:if="${p.imagens == null or p.imagens.isEmpty()}"
+            class="text-sm text-gray-500"
+          >
+            Nenhuma imagem cadastrada.
+          </div>
 
-        <hr class="my-4">
+          <hr class="my-4" />
 
-        <!-- NOVAS IMAGENS -->
-        <div>
-          <label class="block mb-1 text-sm font-medium text-gray-700">Adicionar novas imagens</label>
-          <input type="file" name="files" multiple 
-                 class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-gray-50">
-        </div>
+          <div>
+            <label class="block mb-1 text-sm font-medium text-gray-700">
+              Adicionar novas imagens
+            </label>
 
-        <!-- Botões -->
-        <div class="flex justify-end gap-3 pt-3">
-          <button type="button" 
-                  th:data-modal-hide="'modalEditarProduto_' + ${p.id}"
-                  class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300">
-            Cancelar
-          </button>
-          <button type="submit" 
-                  class="px-4 py-2 text-white rounded-lg bg-emerald-600 hover:bg-emerald-700">
-            Salvar alterações
-          </button>
-        </div>
-      </form>
+            <input
+              type="file"
+              name="files"
+              multiple
+              class="block w-full text-sm text-gray-700 border border-gray-300 rounded-lg cursor-pointer bg-gray-50"
+            />
+          </div>
+
+          <div class="flex justify-end gap-3 pt-3">
+            <button
+              type="button"
+              th:data-modal-hide="'modalEditarProduto_' + ${p.id}"
+              class="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300"
+            >
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              class="px-4 py-2 text-white rounded-lg bg-emerald-600 hover:bg-emerald-700"
+            >
+              Salvar alterações
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <!-- ========== MODAL DE VISUALIZAÇÃO DE PRODUTO ========== -->
-  <div th:each="p : ${itens}" 
-       th:id="'modalVerProduto_' + ${p.id}" 
-       tabindex="-1" 
-       aria-hidden="true" 
-       class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50">
-  
-    <div class="w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg overflow-y-auto max-h-[90vh]">
-      <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold text-gray-900" th:text="'Produto: ' + ${p.nome}"></h2>
-        <button type="button" 
-                th:data-modal-hide="'modalVerProduto_' + ${p.id}" 
-                class="text-2xl leading-none text-gray-500 hover:text-gray-700">&times;</button>
-      </div>
-    
-      <!-- Dados do produto -->
-      <div class="space-y-3 text-gray-800">
-        <p><strong>Descrição:</strong> <span th:text="${p.descricao}"></span></p>
-        <p><strong>Preço:</strong> R$ <span th:text="${#numbers.formatDecimal(p.preco, 1, 2)}"></span></p>
-        <p><strong>Duração:</strong> 
-          <span th:text="${p.duracaoMinutos != null} ? ${p.duracaoMinutos + ' minutos'} : '—'"></span>
-        <p>
-          <strong>Status:</strong>
-          <span th:text="${p.disponivel} ? 'Disponível' : 'Indisponível'" 
-                th:classappend="${p.disponivel} ? 'text-green-600' : 'text-red-600'"></span>
-        </p>
-        <p><strong>Negócio:</strong> <span th:text="${p.negocio.nome}"></span></p>
-      </div>
-    
-      <hr class="my-4">
-    
-      <!-- Galeria de imagens -->
-      <h3 class="mb-2 text-lg font-semibold text-gray-900">Imagens</h3>
-    
-      <div th:if="${p.imagens != null and !p.imagens.isEmpty()}" 
-           class="grid grid-cols-2 gap-4">
-        <div th:each="img : ${p.imagens}" class="relative p-2 bg-gray-100 border rounded-lg">
-          <img th:src="${img.url}" alt="Imagem do produto" 
-               class="object-cover w-full h-40 border rounded-md">
-          <span th:if="${img.principal}" 
-                class="absolute px-2 py-1 text-xs text-white rounded-full shadow top-1 left-1 bg-amber-500">
-            Principal
-          </span>
+    <!-- ========== MODAL DE VISUALIZAÇÃO DE PRODUTO ========== -->
+    <div
+      th:each="p : ${itens}"
+      th:id="'modalVerProduto_' + ${p.id}"
+      class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50"
+    >
+      <div
+        class="w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg overflow-y-auto max-h-[90vh]"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <h2
+            class="text-xl font-semibold text-gray-900"
+            th:text="'Produto: ' + ${p.nome}"
+          ></h2>
+
+          <button
+            type="button"
+            th:data-modal-hide="'modalVerProduto_' + ${p.id}"
+            class="text-2xl leading-none text-gray-500 hover:text-gray-700"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div class="space-y-3 text-gray-800">
+          <p>
+            <strong>Descrição:</strong> <span th:text="${p.descricao}"></span>
+          </p>
+          <p>
+            <strong>Preço:</strong> R$
+            <span th:text="${#numbers.formatDecimal(p.preco, 1, 2)}"></span>
+          </p>
+          <p>
+            <strong>Duração:</strong>
+            <span
+              th:text="${p.duracaoMinutos != null}
+                        ? ${p.duracaoMinutos + ' minutos'}
+                        : '—'"
+            ></span>
+          </p>
+
+          <p>
+            <strong>Status:</strong>
+            <span
+              th:text="${p.disponivel} ? 'Disponível' : 'Indisponível'"
+              th:classappend="${p.disponivel} ? 'text-green-600' : 'text-red-600'"
+            ></span>
+          </p>
+
+          <p>
+            <strong>Negócio:</strong> <span th:text="${p.negocio.nome}"></span>
+          </p>
+        </div>
+
+        <hr class="my-4" />
+
+        <h3 class="mb-2 text-lg font-semibold text-gray-900">Imagens</h3>
+
+        <div
+          th:if="${p.imagens != null and !p.imagens.isEmpty()}"
+          class="grid grid-cols-2 gap-4"
+        >
+          <div
+            th:each="img : ${p.imagens}"
+            class="relative p-2 bg-gray-100 border rounded-lg"
+          >
+            <img
+              th:src="${img.url}"
+              class="object-cover w-full h-40 border rounded-md"
+            />
+
+            <span
+              th:if="${img.principal}"
+              class="absolute px-2 py-1 text-xs text-white rounded-full shadow top-1 left-1 bg-amber-500"
+            >
+              Principal
+            </span>
+          </div>
+        </div>
+
+        <div
+          th:if="${p.imagens == null or p.imagens.isEmpty()}"
+          class="text-sm text-gray-500"
+        >
+          Nenhuma imagem cadastrada para este produto.
+        </div>
+
+        <div class="flex justify-end mt-6">
+          <button
+            type="button"
+            th:data-modal-hide="'modalVerProduto_' + ${p.id}"
+            class="px-4 py-2 text-white rounded-lg bg-emerald-600 hover:bg-emerald-700"
+          >
+            Fechar
+          </button>
         </div>
       </div>
-    
-      <div th:if="${p.imagens == null or p.imagens.isEmpty()}" 
-           class="text-sm text-gray-500">
-        Nenhuma imagem cadastrada para este produto.
-      </div>
-    
-      <div class="flex justify-end mt-6">
-        <button type="button" 
-                th:data-modal-hide="'modalVerProduto_' + ${p.id}" 
-                class="px-4 py-2 text-white rounded-lg bg-emerald-600 hover:bg-emerald-700">
-          Fechar
+    </div>
+
+    <!-- ====================== MODAL MAPA ====================== -->
+    <div
+      id="modalMapa"
+      tabindex="-1"
+      aria-hidden="true"
+      class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50"
+    >
+      <div class="relative w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg">
+        <button
+          data-modal-hide="modalMapa"
+          class="absolute text-2xl text-gray-600 top-3 right-4 hover:text-gray-800"
+        >
+          &times;
         </button>
+
+        <h2 class="mb-4 text-xl font-semibold text-gray-900">
+          Localização do Negócio
+        </h2>
+
+        <div>
+          <iframe
+            id="mapFrame"
+            width="100%"
+            height="400"
+            style="border: 0; border-radius: 10px"
+            loading="lazy"
+            allowfullscreen
+          >
+          </iframe>
+        </div>
+
+        <div class="flex justify-end mt-4">
+          <a
+            th:href="'https://www.google.com/maps?q=' + ${negocio.latitude} + ',' + ${negocio.longitude}"
+            target="_blank"
+            class="px-4 py-2 text-white rounded-lg bg-emerald-600 hover:bg-emerald-700"
+          >
+            Abrir no Google Maps
+          </a>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ====================== MODAL MAPA ====================== -->
-  <div id="modalMapa" tabindex="-1" aria-hidden="true"
-       class="fixed inset-0 z-50 flex items-center justify-center hidden bg-black/50">
+    <!-- ====================== SCRIPTS FINAIS ====================== -->
 
-    <div class="relative w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg">
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        function getHora(id) {
+          const el = document.getElementById(id);
+          if (!el) return null;
 
-      <!-- Fechar -->
-      <button data-modal-hide="modalMapa"
-              class="absolute text-2xl text-gray-600 top-3 right-4 hover:text-gray-800">&times;</button>
+          let h = el.value || el.textContent.trim();
+          if (!h) return null;
 
-      <h2 class="mb-4 text-xl font-semibold text-gray-900">
-        Localização do Negócio
-      </h2>
+          if (h.length > 5) h = h.substring(0, 5);
+          const [hr, min] = h.split(":").map(Number);
 
-      <!-- MAPA -->
-      <div>
-  <iframe id="mapFrame"
-          width="100%" height="400" style="border:0; border-radius: 10px;"
-          loading="lazy" allowfullscreen>
-  </iframe>
-</div>
-
-
-      <!-- Ações -->
-      <div class="flex justify-end mt-4">
-        <a th:href="'https://www.google.com/maps?q=' + ${negocio.latitude} + ',' + ${negocio.longitude}"
-           target="_blank"
-           class="px-4 py-2 text-white rounded-lg bg-emerald-600 hover:bg-emerald-700">
-          Abrir no Google Maps
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <script>
-document.addEventListener("DOMContentLoaded", () => {
-
-    function getHora(elementId) {
-        const el = document.getElementById(elementId);
-        if (!el) return null;
-
-        let hora = el.value || el.textContent.trim();
-        if (!hora) return null;
-
-        // Remove segundos (08:00:00 → 08:00)
-        if (hora.length > 5) {
-            hora = hora.substring(0, 5);
+          return hr * 60 + min;
         }
 
-        const [h, m] = hora.split(":").map(Number);
-        return h * 60 + m; // converte para minutos
-    }
+        function verificarStatus() {
+          const ab = getHora("horaAbertura");
+          const fe = getHora("horaFechamento");
 
-    function verificarStatus() {
-        const aberturaMin = getHora("horaAbertura");
-        const fechamentoMin = getHora("horaFechamento");
+          if (ab === null || fe === null) return;
 
-        if (aberturaMin === null || fechamentoMin === null) {
-            console.error("Erro ao obter horários");
-            return;
+          const agora = new Date();
+          const atual = agora.getHours() * 60 + agora.getMinutes();
+
+          let aberto = false;
+
+          if (fe > ab) aberto = atual >= ab && atual < fe;
+          else aberto = atual >= ab || atual < fe;
+
+          const el = document.getElementById("statusLoja");
+          el.textContent = aberto ? "Aberto" : "Fechado";
+          el.style.color = aberto ? "lime" : "red";
         }
 
-        const agora = new Date();
-        const horaAtualMin = agora.getHours() * 60 + agora.getMinutes();
+        verificarStatus();
+        setInterval(verificarStatus, 60000);
+      });
+    </script>
 
-        let aberto = false;
+    <script>
+      document
+        .querySelector("[data-modal-toggle='modalMapa']")
+        ?.addEventListener("click", () => {
+          const lat = parseFloat("[[${negocio.latitude}]]");
+          const lon = parseFloat("[[${negocio.longitude}]]");
 
-        if (fechamentoMin > aberturaMin) {
-            // Horário normal (ex: 08:00 → 18:00)
-            aberto = horaAtualMin >= aberturaMin && horaAtualMin < fechamentoMin;
-        } else {
-            // Fecha no dia seguinte (ex: 08:00 → 03:00)
-            aberto = (horaAtualMin >= aberturaMin) || (horaAtualMin < fechamentoMin);
-        }
+          const url = `https://www.google.com/maps?q=${lat},${lon}&output=embed`;
+          document.getElementById("mapFrame").src = url;
+        });
+    </script>
 
-        const statusEl = document.getElementById("statusLoja");
-        statusEl.textContent = aberto ? "Aberto" : "Fechado";
-        statusEl.style.color = aberto ? "green" : "red";
-    }
+    <script>
+      const negocioId = parseFloat("[[${negocio.id}]]");
 
-    verificarStatus();
-    setInterval(verificarStatus, 60000); // atualiza a cada 1 min
-});
-</script>
+      function editarCampo(campo, valor) {
+        fetch(`/negocios/${negocioId}/atualizar-campo`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: `campo=${campo}&valor=${valor}`,
+        })
+          .then((r) => r.text())
+          .then((resp) => {
+            if (resp !== "ok") alert("Erro ao atualizar");
+          });
+      }
+    </script>
 
+    <script>
+      function previewImage(input, previewId) {
+        const file = input.files[0];
+        if (!file) return;
 
-
-
-  <script>
-  document.querySelector("[data-modal-toggle='modalMapa']").addEventListener("click", () => {
-
-    const lat = parseFloat("[[${negocio.latitude}]]");
-    const lon = parseFloat("[[${negocio.longitude}]]");
-
-    const url = `https://www.google.com/maps?q=${lat},${lon}&output=embed`;
-
-    document.getElementById("mapFrame").src = url;
-});
-
-</script>
-
-<script>
-function editarCampo(campo, valor) {
-    fetch(`/negocios/${negocioId}/atualizar-campo`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: `campo=${campo}&valor=${valor}`
-    })
-    .then(r => r.text())
-    .then(resp => {
-        if (resp !== "ok") {
-            alert("Erro ao atualizar");
-        }
-    });
-}
-</script>
-
-<script>
-  const negocioId= parseFloat("[[${negocio.id}]]");
-</script>
-
-
-</body>
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          document.getElementById(previewId).src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    </script>
+  </body>
 </html>

@@ -7,23 +7,20 @@ import com.pi.comuniShop.model.TipoUsuario;
 import com.pi.comuniShop.service.CatalogoService;
 import com.pi.comuniShop.service.NegocioService;
 import com.pi.comuniShop.service.UsuarioService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalTime;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Controller
 @RequestMapping("/negocios")
 public class NegocioController {
-
-    private static final Logger logger = LoggerFactory.getLogger(NegocioController.class);
 
     @Autowired
     private NegocioService negocioService;
@@ -34,7 +31,9 @@ public class NegocioController {
     @Autowired
     private CatalogoService catalogoService;
 
-    // ✅ Criar Negócio + Dono (modal)
+    // =============================
+    // CRIAR NEGÓCIO
+    // =============================
     @PostMapping("/salvar")
     public String salvarNegocioComDono(
             @RequestParam String nome,
@@ -44,8 +43,6 @@ public class NegocioController {
             @RequestParam String senha,
             @RequestParam String nomeNegocio,
             @RequestParam(required = false) String cnpj,
-
-            // ENDEREÇO DO NEGÓCIO
             @RequestParam String cep,
             @RequestParam String estado,
             @RequestParam String cidade,
@@ -54,7 +51,6 @@ public class NegocioController {
             @RequestParam String numero,
             @RequestParam(required = false) String complemento) {
 
-        // 1️⃣ CRIA O DONO
         Usuario dono = new Usuario();
         dono.setNome(nome);
         dono.setCpf(cpf);
@@ -65,16 +61,13 @@ public class NegocioController {
 
         usuarioService.salvar(dono);
 
-        // 2️⃣ CRIA O NEGOCIO
         Negocio negocio = new Negocio();
         negocio.setNome(nomeNegocio);
         negocio.setCnpj(cnpj);
         negocio.setDono(dono);
-
         negocio.setEmailComercial(email);
         negocio.setTelefoneComercial(telefone);
 
-        // ⭐ AQUI ESTAVA FALTANDO → ENDEREÇO
         negocio.setCep(cep);
         negocio.setEstado(estado);
         negocio.setCidade(cidade);
@@ -88,7 +81,9 @@ public class NegocioController {
         return "redirect:/negocios/" + negocio.getId();
     }
 
-    // ✅ Página de detalhes do negócio (painel do dono)
+    // =============================
+    // PAINEL DO NEGÓCIO
+    // =============================
     @GetMapping("/{id}")
     public String detalhes(@PathVariable Long id,
             Authentication authentication,
@@ -99,28 +94,23 @@ public class NegocioController {
             return "redirect:/negocios";
 
         String emailLogado = authentication.getName();
-        if (!emailLogado.equals(negocio.getDono().getEmail())) {
-            logger.warn("🚫 Tentativa de acesso bloqueada! Dono={}, Logado={}",
-                    negocio.getDono().getEmail(), emailLogado);
+        if (!emailLogado.equals(negocio.getDono().getEmail()))
             return "redirect:/negocios";
-        }
 
         List<Catalogo> itens = catalogoService.listarPorNegocio(negocio.getId());
 
         model.addAttribute("negocio", negocio);
         model.addAttribute("itens", itens);
 
-        System.out.println("Produtos do negócio " + negocio.getId() + ": " + itens.size());
-        itens.forEach(item -> System.out.println(" - " + item.getNome()));
-
-        return "negocio/negocio-detalhes"; // painel
+        return "negocio/negocio-detalhes";
     }
 
-    // ✅ Formulário de edição
+    // =============================
+    // EDITAR NEGÓCIO
+    // =============================
     @GetMapping("/{id}/editar")
     public String editar(@PathVariable Long id, Model model) {
         Negocio negocio = negocioService.buscarPorId(id);
-
         if (negocio == null)
             return "redirect:/negocios";
 
@@ -146,7 +136,6 @@ public class NegocioController {
         negocio.setAgendamentoAtivo(dados.isAgendamentoAtivo());
         negocio.setEntregasAtivas(dados.isEntregasAtivas());
 
-        // ENDEREÇO ATUALIZA AQUI 👇
         negocio.setCep(dados.getCep());
         negocio.setEstado(dados.getEstado());
         negocio.setCidade(dados.getCidade());
@@ -160,55 +149,87 @@ public class NegocioController {
         return "redirect:/negocios/" + id;
     }
 
-    // ✅ Listar todos os negócios (somente para admin)
+    // =============================
+    // UPLOAD LOGO
+    // =============================
+    @PostMapping("/{id}/upload-logo")
+    public String uploadLogo(@PathVariable Long id,
+            @RequestParam("logo") MultipartFile file) {
+
+        Negocio negocio = negocioService.buscarPorId(id);
+        if (negocio == null)
+            return "redirect:/negocios";
+
+        String url = negocioService.salvarImagem(file, id, "logo");
+
+        if (url != null) {
+            negocio.setLogoUrl(url);
+            negocioService.salvar(negocio);
+        }
+
+        return "redirect:/negocios/" + id;
+    }
+
+    // =============================
+    // UPLOAD PAINEL
+    // =============================
+    @PostMapping("/{id}/upload-painel")
+    public String uploadPainel(@PathVariable Long id,
+            @RequestParam("painel") MultipartFile file) {
+
+        System.out.println("🔥 MÉTODO CHAMADO!");
+        System.out.println("Arquivo recebido: " + file.getOriginalFilename());
+
+        Negocio negocio = negocioService.buscarPorId(id);
+        if (negocio == null)
+            return "redirect:/negocios";
+
+        String url = negocioService.salvarImagem(file, id, "painel");
+
+        if (url != null) {
+            negocio.setPainelUrl(url);
+            negocioService.salvar(negocio);
+        }
+
+        return "redirect:/negocios/" + id;
+    }
+
+    @PostMapping("/{id}/remover-logo")
+    public String removerLogo(@PathVariable Long id) {
+        Negocio negocio = negocioService.buscarPorId(id);
+        if (negocio == null)
+            return "redirect:/negocios";
+
+        negocio.setLogoUrl(null);
+        negocioService.salvar(negocio);
+
+        return "redirect:/negocios/" + id;
+    }
+
+    @PostMapping("/{id}/remover-painel")
+    public String removerPainel(@PathVariable Long id) {
+        Negocio negocio = negocioService.buscarPorId(id);
+        if (negocio == null)
+            return "redirect:/negocios";
+
+        negocio.setPainelUrl(null);
+        negocioService.salvar(negocio);
+
+        return "redirect:/negocios/" + id;
+    }
+
+    // =============================
+    // LISTAR / EXCLUIR
+    // =============================
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("negocios", negocioService.listarTodos());
         return "negocio/negocio-list";
     }
 
-    // ✅ Excluir negocio
     @GetMapping("/{id}/excluir")
     public String excluir(@PathVariable Long id) {
         negocioService.excluir(id);
         return "redirect:/negocios";
     }
-
-    @PostMapping("/{id}/atualizar-campo")
-@ResponseBody
-public String atualizarCampo(
-        @PathVariable Long id,
-        @RequestParam String campo,
-        @RequestParam String valor) {
-
-    System.out.println("🔥 Recebido campo=" + campo + " | valor=" + valor);
-
-    Negocio negocio = negocioService.buscarPorId(id);
-    if (negocio == null) {
-        System.out.println("❌ Negócio não encontrado");
-        return "erro";
-    }
-
-    try {
-        switch (campo) {
-            case "horaAbertura" -> negocio.setHoraAbertura(LocalTime.parse(valor));
-            case "horaFechamento" -> negocio.setHoraFechamento(LocalTime.parse(valor));
-            case "catalogoAtivo" -> negocio.setCatalogoAtivo(Boolean.parseBoolean(valor));
-            case "agendamentoAtivo" -> negocio.setAgendamentoAtivo(Boolean.parseBoolean(valor));
-            case "entregasAtivas" -> negocio.setEntregasAtivas(Boolean.parseBoolean(valor));
-            default -> {
-                System.out.println("❌ Campo inválido: " + campo);
-                return "campo_invalido";
-            }
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        return "erro_parse";
-    }
-
-    negocioService.salvar(negocio);
-    return "ok";
-}
-
-
 }

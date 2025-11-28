@@ -17,11 +17,9 @@ import com.pi.comuniShop.model.Catalogo;
 import com.pi.comuniShop.model.Negocio;
 import com.pi.comuniShop.model.Usuario;
 import com.pi.comuniShop.repository.UsuarioRepository;
+import com.pi.comuniShop.repository.ImagemCatalogoRepository;
 
 import com.pi.comuniShop.service.CatalogoService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 public class LoginController {
@@ -32,7 +30,11 @@ public class LoginController {
     @Autowired
     private CatalogoService catalogoService;
 
+    @Autowired
+    private ImagemCatalogoRepository ImagemCatalogoRepository;
+
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
+
 
     @GetMapping({ "/", "/login" })
     public String index(Model model) {
@@ -48,7 +50,7 @@ public class LoginController {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
         
         log.info("🟢 Entrou no método /usuario/home para o usuário: {}", usuario.getEmail());
-        
+
         // carrega todos itens do catálogo
         List<Catalogo> itens = catalogoService.listarTodos();
         log.info("📦 Itens carregados: {}", itens.size());
@@ -61,6 +63,7 @@ public class LoginController {
         model.addAttribute("usuario", usuario);
         model.addAttribute("itens", itens);                     // lista normal
         model.addAttribute("catalogosPorNegocio", catalogosPorNegocio); // agrupado
+        model.addAttribute("imgRepo", ImagemCatalogoRepository);
         
         return "usuario/home";
     }

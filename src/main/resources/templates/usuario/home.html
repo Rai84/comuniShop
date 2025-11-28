@@ -1,248 +1,426 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
-<head th:replace="~{fragments/head :: headFragment('Home')}"></head>
+  <head th:replace="~{fragments/head :: headFragment('Home')}"></head>
 
-<body class="text-gray-900 bg-gray-100">
-
-  <!-- MENU SUPERIOR -->
-  <div th:replace="~{fragments/menuHome :: menuFragment}"></div>
-
-  <!-- BARRA LATERAL -->
-  <nav class="w-8 h-[calc(100vh-40px)] bg-gray-600 fixed flex items-center justify-between flex-col top-10">
-    <div class="flex flex-col items-center gap-1 pt-4 text-white">
-      <i class="bi bi-box"></i>
-      <i class="bi bi-box"></i>
-      <i class="bi bi-box"></i>
-      <i class="bi bi-box"></i>
-    </div>
-
-    <button id="abrirMapa" class="w-6 h-20 bg-[--color-destaque] rounded-4xl">
-      <i class="text-2xl text-white bi bi-geo-alt-fill"></i>
-    </button>
-
-    <button id="abrirModal" class="text-lg text-white transition hover:text-[--color-destaque] pb-2.5">
-      <i class="bi bi-gear-fill"></i>
-    </button>
-  </nav>
-
-  <!-- CONTEÚDO -->
-  <div class="w-[calc(100vw-47px)] absolute left-8 p-10">
-
-    <!-- =============== LOJAS COM CATALOGO ATIVO =============== -->
-    <h2 class="text-xl font-bold mb-4">Lojas Disponíveis</h2>
-
-    <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-
-      <div th:each="entry : ${catalogosPorNegocio}">
-        <div th:if="${entry.key.catalogoAtivo}" class="p-4 bg-white shadow-md rounded-xl flex flex-col justify-between">
-
-          <h2 class="text-lg font-semibold text-gray-800" th:text="${entry.key.nome}"></h2>
-
-          <p class="text-sm text-gray-600 mt-1">
-            🕒 
-            <span th:text="${entry.key.horaAbertura}"></span> -
-            <span th:text="${entry.key.horaFechamento}"></span>
-          </p>
-
-          <button
-            th:data-modal-target="'modalLoja_' + ${entry.key.id}"
-            th:data-modal-toggle="'modalLoja_' + ${entry.key.id}"
-            class="w-full py-2 mt-4 bg-destaque text-black rounded-lg hover:bg-destaque2">
-            Ver Itens
-          </button>
-
-        </div>
+  <body class="text-gray-900 bg-gray-100">
+    <!-- MENU SUPERIOR -->
+    <header class="bg-gray-100 w-[calc(100vw-2rem)] h-8 left-8 flex items-center justify-between fixed z-[9999]">
+      <div class="gap-5 ml-2.5 flex">
+        <button class="hover:text-[var(--color-destaque)]">Lojas</button>
+        <button class="hover:text-[var(--color-destaque)]">Serviços</button>
       </div>
 
-    </div>
+      <p class="mr-2.5"><span th:text="${usuario.logradouro}"></span></p>
+    </header>
 
-    <!-- =============== ITENS DE LOJAS SEM CATALOGO =============== -->
-    <h2 class="text-xl font-bold mt-10 mb-4">Produtos Disponíveis</h2>
-
-    <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-
-      <div th:each="i : ${itens}" th:if="${!i.negocio.catalogoAtivo}"
-           class="flex flex-col justify-between overflow-hidden transition-shadow duration-300 bg-white shadow-md rounded-2xl hover:shadow-xl">
-
-        <img th:src="${#lists.isEmpty(i.imagens) ? '/img/no-image.png' : i.imagens[0].url}"
-             class="object-cover w-full h-48 transition-transform duration-300 hover:scale-105">
-
-        <div class="flex flex-col flex-grow p-4">
-
-          <h3 th:text="${i.nome}" class="mb-1 text-lg font-semibold text-gray-900 truncate"></h3>
-
-          <p th:text="${i.descricao}" class="mb-2 text-sm text-gray-600 line-clamp-2"></p>
-
-          <p class="font-semibold text-gray-700">
-            R$ <span th:text="${#numbers.formatDecimal(i.preco, 1, 2)}"></span>
-          </p>
-
-          <button
-            th:data-modal-target="'modalItem_' + ${i.id}"
-            th:data-modal-toggle="'modalItem_' + ${i.id}"
-            class="inline-block w-full py-2 mt-3 text-sm font-medium text-center text-black bg-destaque rounded-lg hover:bg-destaque2">
-            Ver Detalhes
-          </button>
-
-        </div>
+    <!-- BARRA LATERAL -->
+    <nav
+      class="w-8 h-full bg-gray-600 fixed flex items-center justify-between flex-col  z-[9999]"
+    >
+      <div class="flex flex-col items-center gap-1 pt-4 text-white">
+        <i class="cursor-pointer bi bi-person-circle hover:text-[var(--color-destaque)]"></i>
+        <i class="cursor-pointer bi bi-cart2 hover:text-[var(--color-destaque)]"></i>
+        <i class="cursor-pointer bi bi-calendar-event hover:text-[var(--color-destaque)]"></i>
+        <i class="cursor-pointer bi bi-chat-left-dots hover:text-[var(--color-destaque)]"></i>
       </div>
 
-    </div>
+      <button
+        id="abrirMapa"
+        class="w-6 h-20 bg-[var(--color-destaque)] rounded-4xl"
+      >
+        <i class="text-2xl text-white bi bi-geo-alt-fill"></i>
+      </button>
 
-    <!-- =============== MODAIS DE ITENS (Catalogo) =============== -->
-    <div th:each="i : ${itens}"
-         th:id="'modalItem_' + ${i.id}"
-         class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center">
+      <button
+        id="abrirModal"
+        class="text-lg text-white transition hover:text-[var(--color-destaque)] pb-2.5"
+      >
+        <i class="bi bi-gear-fill"></i>
+      </button>
+    </nav>
 
-      <div class="w-full max-w-2xl p-6 bg-white rounded-lg shadow-lg overflow-y-auto max-h-[90vh]">
+    <!-- CONTEÚDO -->
+    <div class="w-[calc(100vw-47px)] absolute left-8 p-10">
+      <!-- =============== LOJAS COM CATALOGO ATIVO =============== -->
+      <h2 class="mb-4 text-xl font-bold">Lojas Disponíveis</h2>
 
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-semibold" th:text="${i.nome}"></h2>
+      <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+        <div th:each="entry : ${catalogosPorNegocio}">
+          <div
+            th:if="${entry.key.catalogoAtivo}"
+            class="flex flex-col overflow-hidden bg-white shadow-md rounded-xl"
+          >
+            <!-- IMAGEM DO PAINEL -->
+            <div
+              class="relative flex items-center justify-center w-full h-32 bg-gray-200"
+            >
+              <img
+                th:if="${entry.key.painelUrl != null}"
+                th:src="${entry.key.painelUrl}"
+                class="object-cover w-full h-full"
+              />
 
-          <button th:data-modal-hide="'modalItem_' + ${i.id}" class="text-2xl text-gray-600 hover:text-gray-800">&times;</button>
-        </div>
+              <div
+                th:if="${entry.key.painelUrl == null}"
+                class="w-16 h-16 bg-gray-300 rounded-md"
+              ></div>
+            </div>
 
-        <p><strong>Descrição:</strong> <span th:text="${i.descricao}"></span></p>
-        <p><strong>Preço:</strong> R$ <span th:text="${#numbers.formatDecimal(i.preco,1,2)}"></span></p>
-        <p><strong>Negócio:</strong> <span th:text="${i.negocio.nome}"></span></p>
+            <!-- CORPO DO CARD -->
+            <div class="p-4">
+              <!-- LOGO -->
+              <div class="flex items-center gap-3 mb-3">
+                <img
+                  th:src="${entry.key.logoUrl != null ? entry.key.logoUrl : '/img/default-logo.png'}"
+                  class="object-cover w-12 h-12 border rounded-full"
+                />
 
-        <h3 class="mt-4 mb-2 font-semibold text-lg">Imagens</h3>
+                <div>
+                  <p class="text-sm text-gray-500">Loja</p>
+                  <h2
+                    class="text-lg font-semibold text-gray-800"
+                    th:text="${entry.key.nome}"
+                  ></h2>
+                </div>
+              </div>
 
-        <div th:if="${i.imagens != null && !i.imagens.isEmpty()}"
-             class="grid grid-cols-2 gap-4">
-          <div th:each="img : ${i.imagens}" class="p-2 bg-gray-100 border rounded-lg">
-            <img th:src="${img.url}" class="object-cover w-full h-40 rounded-md">
-          </div>
-        </div>
+              <!-- DESCRIÇÃO -->
+              <p
+                class="mb-3 text-sm text-gray-600"
+                th:text="${entry.key.descricao != null ? entry.key.descricao : 'Sem descrição disponível.'}"
+              ></p>
 
-        <div th:if="${i.imagens == null || i.imagens.isEmpty()}" class="text-sm text-gray-500">
-          Nenhuma imagem cadastrada.
-        </div>
-
-        <button th:data-modal-hide="'modalItem_' + ${i.id}"
-                class="mt-6 px-4 py-2 text-white rounded-lg bg-destaque hover:bg-destaque2 w-full">
-          Fechar
-        </button>
-
-      </div>
-    </div>
-
-    <!-- =============== MODAIS DAS LOJAS =============== -->
-    <div th:each="entry : ${catalogosPorNegocio}">
-      <div th:if="${entry.key.catalogoAtivo}"
-           th:id="'modalLoja_' + ${entry.key.id}"
-           class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center">
-
-        <div class="max-w-3xl w-full bg-white p-6 rounded-lg shadow-lg max-h-[90vh] overflow-y-auto">
-
-          <div class="flex justify-between mb-4">
-            <h2 class="text-xl font-bold" th:text="${entry.key.nome}"></h2>
-            <button th:data-modal-hide="'modalLoja_' + ${entry.key.id}"
-                    class="text-gray-600 text-2xl hover:text-black">&times;</button>
-          </div>
-
-          <p class="mb-4 text-gray-600">
-            🕒 Horário: 
-            <span th:text="${entry.key.horaAbertura}"></span> - 
-            <span th:text="${entry.key.horaFechamento}"></span>
-          </p>
-
-          <!-- LISTA DE ITENS DO NEGÓCIO -->
-          <div class="grid gap-4 sm:grid-cols-2">
-
-            <div th:each="i : ${entry.value}" class="border p-3 rounded-lg shadow">
-
-              <img th:src="${#lists.isEmpty(i.imagens) ? '/img/no-image.png' : i.imagens[0].url}"
-                   class="w-full h-32 object-cover rounded mb-2">
-
-              <h3 class="font-semibold" th:text="${i.nome}"></h3>
-
-              <p class="text-sm text-gray-600 line-clamp-2" th:text="${i.descricao}"></p>
-
-              <p class="font-bold mt-2">
-                R$ <span th:text="${#numbers.formatDecimal(i.preco,1,2)}"></span>
+              <p class="mb-4 text-sm text-gray-600">
+                📞
+                <span th:text="${entry.key.telefoneComercial}"></span>
               </p>
 
-              <button
-                th:data-modal-target="'modalItem_' + ${i.id}"
-                th:data-modal-toggle="'modalItem_' + ${i.id}"
-                class="w-full py-2 mt-2 text-sm bg-destaque rounded-lg hover:bg-destaque2">
-                Ver Detalhes
-              </button>
+              <p>
+                <span th:text="${entry.key.id}"
+              </p>
+
+              <!-- HORÁRIO -->
+              <p class="mb-4 text-sm text-gray-600">
+                🕒
+                <span
+                  th:text="${#strings.substring(entry.key.horaAbertura,0,5)}"
+                ></span>
+                -
+                <span
+                  th:text="${#strings.substring(entry.key.horaFechamento,0,5)}"
+                ></span>
+              </p>
+
+              <!-- BOTÃO -->
+              <button 
+    th:onclick="'abrirModalLoja(' + ${entry.key.id} + ')'"
+    class="..."
+>
+    Ver Detalhes
+</button>
 
             </div>
           </div>
-
         </div>
+      </div>
 
+      <!-- =============== ITENS DE LOJAS SEM CATALOGO =============== -->
+      <h2 class="mt-10 mb-4 text-xl font-bold">Produtos Disponíveis</h2>
+
+      <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div
+          th:each="i : ${itens}"
+          th:if="${!i.negocio.catalogoAtivo}"
+          class="flex flex-col justify-between overflow-hidden transition-shadow duration-300 bg-white shadow-md rounded-2xl hover:shadow-xl"
+        >
+          <img
+            th:src="${#lists.isEmpty(i.imagens) ? '/img/no-image.png' : i.imagens[0].url}"
+            class="object-cover w-full h-48 transition-transform duration-300 hover:scale-105"
+          />
+
+          <div class="flex flex-col flex-grow p-4">
+            <h3
+              th:text="${i.nome}"
+              class="mb-1 text-lg font-semibold text-gray-900 truncate"
+            ></h3>
+
+            <p
+              th:text="${i.descricao}"
+              class="mb-2 text-sm text-gray-600 line-clamp-2"
+            ></p>
+
+            <p class="font-semibold text-gray-700">
+              R$
+              <span th:text="${#numbers.formatDecimal(i.preco, 1, 2)}"></span>
+            </p>
+
+            <button
+              onclick="abrirModalItem('[[${entry.key.id}]]', '[[${i.id}]]')"
+              class="inline-block w-full py-2 mt-3 text-sm font-medium text-center text-black rounded-lg bg-destaque hover:bg-destaque2"
+            >
+              Ver Detalhes
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL ÚNICO -->
+      <div id="modalUnico"
+     class="fixed inset-0 z-50 flex items-center hidden bg-black/50">
+
+  <div id="modalConteiner"
+       class="bg-gray-100 shadow-xl rounded-lg overflow-hidden transition-all duration-300
+              w-[90%] max-w-3xl h-[calc(100vh-3rem)] mt-8 ml-10">
+
+      <!-- ETAPA 1 – SÓ CATÁLOGO -->
+      <div id="etapa1" class="h-full p-6 overflow-y-auto"></div>
+
+      <!-- ETAPA 2 – CATÁLOGO + DETALHES -->
+      <div id="etapa2" class="flex hidden h-full">
+
+         <!-- CATÁLOGO (LADO ESQUERDO) -->
+         <div id="colCatalogo" class="w-1/2 p-6 overflow-y-auto border-r"></div>
+
+         <!-- DETALHES DO PRODUTO (LADO DIREITO) -->
+         <div id="colDetalhes" class="w-1/2 p-6 overflow-y-auto"></div>
+
+      </div>
+
+      <button onclick="fecharModal()"
+              class="relative text-2xl text-red-600 hover:text-black top-[-41rem] left-[46rem]">
+          &times;
+      </button>
+  </div>
+
+</div>
+
+
+
+
+  </div>
+
+    <!-- =============== MAPA =============== -->
+    <div
+      id="modalMapa"
+      class="fixed inset-0 z-50 items-center justify-center hidden mt-8 ml-8 bg-black/50"
+    >
+      <div class="relative w-full max-w-3xl p-4 bg-gray-100 shadow-xl">
+        <!-- Fechar -->
+        <button
+          id="fecharMapa"
+          class="absolute text-2xl text-gray-600 top-3 right-4 hover:text-gray-900"
+        >
+          &times;
+        </button>
+
+        <h2 class="mb-3 text-xl font-semibold">Mapa</h2>
+
+        <div
+          id="map"
+          style="height: 600px; width: 100%; border-radius: 10px"
+        ></div>
       </div>
     </div>
 
-  </div><!-- FIM CONTEÚDO -->
+    <!-- FIM CONTEÚDO -->
+
+    <!-- =============== SCRIPT CONFIGURAÇÕES =============== -->
+    <script>
+      const modalEl = document.getElementById("popup-modal");
+      const conteudoModal = document.getElementById("conteudo-modal");
+
+      const modal = new Modal(modalEl, {
+        placement: "bottom-left",
+        backdrop: "static",
+        backdropClasses: "hidden",
+        closable: true,
+      });
+
+      document
+        .getElementById("abrirModal")
+        .addEventListener("click", () => modal.show());
+      document
+        .getElementById("fecharModal")
+        .addEventListener("click", () => modal.hide());
+      document
+        .getElementById("fecharModal2")
+        .addEventListener("click", () => modal.hide());
+    </script>
+
+    <!-- =============== SCRIPT DO MAPA =============== -->
+    <script th:inline="javascript">
+  const abrirMapa = document.getElementById("abrirMapa");
+  const modalMapa = document.getElementById("modalMapa");
+  const fecharMapa = document.getElementById("fecharMapa");
+
+  abrirMapa.onclick = () => {
+    modalMapa.classList.remove("hidden");
+    setTimeout(initMap, 100);
+  };
+
+  fecharMapa.onclick = () => modalMapa.classList.add("hidden");
+  modalMapa.onclick = (e) => { if (e.target === modalMapa) modalMapa.classList.add("hidden"); };
+
+  // Dados Thymeleaf
+  const usuarioLat = /*[[${usuario.latitude}]]*/ 0;
+  const usuarioLng = /*[[${usuario.longitude}]]*/ 0;
+
+  const negocios = [
+    /*[# th:each="entry : ${catalogosPorNegocio}"]*/
+    {
+      nome: '[[${entry.key.nome}]]',
+      lat: '[[${entry.key.latitude}]]',
+      lng: '[[${entry.key.longitude}]]'
+    },
+    /*[/]*/
+];
 
 
-  <!-- =============== SCRIPT CONFIGURAÇÕES =============== -->
-  <script>
-    const modalEl = document.getElementById('popup-modal');
-    const conteudoModal = document.getElementById('conteudo-modal');
+  console.log(negocios);
 
-    const modal = new Modal(modalEl, {
-      placement: 'bottom-left',
-      backdrop: 'static',
-      backdropClasses: 'hidden',
-      closable: true
+  let map;
+  function initMap() {
+    map = L.map('map').setView([usuarioLat, usuarioLng], 14);
+
+    // Tile do OpenStreetMap (GRÁTIS)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+    }).addTo(map);
+
+    // 🔵 Usuário
+    L.marker([usuarioLat, usuarioLng], { 
+      icon: L.icon({
+        iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png',
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+      })
+    }).bindPopup("Você está aqui").addTo(map);
+
+    // 🔴 Negócios
+    negocios.forEach(n => {
+      if (n.lat && n.lng) {
+        L.marker([n.lat, n.lng], {
+          icon: L.icon({
+            iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+          })
+        }).bindPopup(n.nome).addTo(map);
+      }
+    });
+  }
+    </script>
+
+    <script th:inline="javascript">
+    const lojas = [
+        /*[# th:each="entry : ${catalogosPorNegocio}"]*/
+        {
+            id: '[[${entry.key.id}]]',
+            nome: '[[${entry.key.nome}]]',
+            horaAbertura: '[[${entry.key.horaAbertura}]]',
+            horaFechamento: '[[${entry.key.horaFechamento}]]',
+
+            itens: [
+                /*[# th:each="i : ${entry.value}"]*/
+                {
+                    id: '[[${i.id}]]',
+                    nome: '[[${i.nome}]]',
+                    descricao: '[[${i.descricao}]]',
+                    preco: '[[${i.preco}]]',
+                    imagens: [
+                        /*[# th:each="img : ${i.imagens}"]*/
+                            '[[${img.url}]]',
+                        /*[/]*/
+                    ]
+                },
+                /*[/]*/
+            ]
+        },
+        /*[/]*/
+    ];
+</script>
+
+
+<script>
+function abrirModalLoja(lojaId) {
+    const loja = lojas.find(l => String(l.id) === String(lojaId));
+    if (!loja) return;
+
+    let html = `<h2 class="mb-4 text-2xl font-bold">${loja.nome}</h2>`;
+    html += `<div class="grid gap-4 sm:grid-cols-2">`;
+
+    loja.itens.forEach(i => {
+        const img = (i.imagens[0] || '/img/no-image.png').replace(/"/g, '');
+        html += `
+            <div class="p-3 border rounded-lg shadow cursor-pointer"
+                 onclick="abrirItem('${loja.id}', '${i.id}')">
+                <img src="${img}" class="object-cover w-full h-32 mb-2 rounded">
+                <h3 class="font-semibold">${i.nome}</h3>
+                <p class="text-sm text-gray-600">${i.descricao}</p>
+                <p class="mt-2 font-bold">R$ ${i.preco}</p>
+            </div>
+        `;
     });
 
-    document.getElementById('abrirModal').addEventListener('click', () => modal.show());
-    document.getElementById('fecharModal').addEventListener('click', () => modal.hide());
-    document.getElementById('fecharModal2').addEventListener('click', () => modal.hide());
-  </script>
+    html += "</div>";
 
+    document.getElementById("etapa1").innerHTML = html;
 
-  <!-- =============== SCRIPT DO MAPA =============== -->
-  <script th:inline="javascript">
-    const abrirMapa = document.getElementById("abrirMapa");
-    const modalMapa = document.getElementById("modalMapa");
-    const fecharMapa = document.getElementById("fecharMapa");
+    document.getElementById("etapa1").classList.remove("hidden");
+    document.getElementById("etapa2").classList.add("hidden");
 
-    abrirMapa.onclick = () => {
-      modalMapa.classList.remove("hidden");
-      setTimeout(initMap, 100);
-    };
+    document.getElementById("modalConteiner").classList.remove("max-w-5xl");
+    document.getElementById("modalConteiner").classList.add("max-w-3xl");
 
-    fecharMapa.onclick = () => modalMapa.classList.add("hidden");
-    modalMapa.onclick = (e) => { if (e.target === modalMapa) modalMapa.classList.add("hidden"); };
+    document.getElementById("modalUnico").classList.remove("hidden");
+}
 
-    const usuarioLat = /*[[${usuario.latitude}]]*/ 0;
-    const usuarioLng = /*[[${usuario.longitude}]]*/ 0;
+function abrirItem(lojaId, itemId) {
+    const loja = lojas.find(l => String(l.id) === String(lojaId));
+    const item = loja.itens.find(i => String(i.id) === String(itemId));
 
-    const negocios = [
-      /*[# th:each="i : ${itens}"]*/
-      {
-        nome: '[[${i.negocio.nome}]]',
-        lat: '[[${i.negocio.latitude}]]',
-        lng: '[[${i.negocio.longitude}]]'
-      },
-      /*[/]*/
-    ];
+    let cat = `<h2 class="mb-4 text-xl font-bold">${loja.nome}</h2>`;
+    loja.itens.forEach(i => {
+        cat += `
+        <div class="p-2 border-b cursor-pointer hover:bg-gray-100"
+             onclick="abrirItem('${loja.id}','${i.id}')">
+             ${i.nome}
+        </div>`;
+    });
 
-    let map;
-    function initMap() {
-      map = L.map('map').setView([usuarioLat, usuarioLng], 14);
+    document.getElementById("colCatalogo").innerHTML = cat;
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19,
-      }).addTo(map);
+    let det = `
+        <h2 class="mb-4 text-2xl font-bold">${item.nome}</h2>
+        <p><strong>Descrição:</strong> ${item.descricao}</p>
+        <p><strong>Preço:</strong> R$ ${item.preco}</p>
+        <h3 class="mt-4 mb-2 text-lg font-semibold">Imagens</h3>
+    `;
 
-      L.marker([usuarioLat, usuarioLng]).bindPopup("Você está aqui").addTo(map);
-
-      negocios.forEach(n => {
-        if (n.lat && n.lng) {
-          L.marker([n.lat, n.lng]).bindPopup(n.nome).addTo(map);
-        }
-      });
+    if (item.imagens.length > 0) {
+        det += `<div class="grid grid-cols-2 gap-4">`;
+        item.imagens.forEach(img => {
+            const url = img.replace(/"/g, '');
+            det += `<img src="${url}" class="object-cover w-full h-40 rounded">`;
+        });
+        det += `</div>`;
     }
-  </script>
 
-</body>
+    document.getElementById("colDetalhes").innerHTML = det;
+
+    document.getElementById("etapa1").classList.add("hidden");
+    document.getElementById("etapa2").classList.remove("hidden");
+
+    document.getElementById("modalConteiner").classList.add("max-w-5xl");
+    document.getElementById("modalConteiner").classList.remove("max-w-3xl");
+}
+
+function fecharModal() {
+    document.getElementById("modalUnico").classList.add("hidden");
+}
+</script>
+
+
+
+  </body>
 </html>
