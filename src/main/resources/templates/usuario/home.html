@@ -3,27 +3,50 @@
   <head th:replace="~{fragments/head :: headFragment('Home')}"></head>
 
   <body class="text-gray-900 bg-gray-100">
-    <!-- MENU SUPERIOR -->
-    <header class="bg-gray-100 w-[calc(100vw-2rem)] h-8 left-8 flex items-center justify-between fixed z-[9999]">
-      <div class="gap-5 ml-2.5 flex">
+    <!-- ================================================================================= -->
+    <!-- ===============================  MENU SUPERIOR  ================================= -->
+    <!-- ================================================================================= -->
+    <header
+      class="fixed z-[9999] flex items-center justify-between w-[calc(100vw-2rem)] h-8 bg-gray-100 left-8"
+    >
+      <div class="flex gap-5 ml-2.5">
         <button class="hover:text-[var(--color-destaque)]">Lojas</button>
         <button class="hover:text-[var(--color-destaque)]">Serviços</button>
       </div>
 
-      <p class="mr-2.5"><span th:text="${usuario.logradouro}"></span></p>
+      <p class="mr-2.5">
+        <span th:text="${usuario.logradouro}"></span>
+      </p>
     </header>
 
-    <!-- BARRA LATERAL -->
+    <!-- ================================================================================= -->
+    <!-- ===============================  BARRA LATERAL  ================================= -->
+    <!-- ================================================================================= -->
     <nav
-      class="w-8 h-full bg-gray-600 fixed flex items-center justify-between flex-col  z-[9999]"
+      class="fixed z-[9999] flex flex-col items-center justify-between w-8 h-full bg-gray-600"
     >
+      <!-- ÍCONES DO MENU LATERAL -->
       <div class="flex flex-col items-center gap-1 pt-4 text-white">
-        <i class="cursor-pointer bi bi-person-circle hover:text-[var(--color-destaque)]"></i>
-        <i class="cursor-pointer bi bi-cart2 hover:text-[var(--color-destaque)]"></i>
-        <i class="cursor-pointer bi bi-calendar-event hover:text-[var(--color-destaque)]"></i>
-        <i class="cursor-pointer bi bi-chat-left-dots hover:text-[var(--color-destaque)]"></i>
+        <i
+          onclick="abrirModal('modalPerfil')"
+          class="cursor-pointer bi bi-person-circle hover:text-[var(--color-destaque)]"
+        ></i>
+        <i
+          onclick="abrirModal('modalCarrinho')"
+          class="cursor-pointer bi bi-cart2 hover:text-[var(--color-destaque)]"
+        ></i>
+        <i
+  onclick="abrirModalAgenda()"
+  class="cursor-pointer bi bi-calendar-event hover:text-[var(--color-destaque)]"
+></i>
+
+        <i
+          onclick="abrirModal('modalChat')"
+          class="cursor-pointer bi bi-chat-left-dots hover:text-[var(--color-destaque)]"
+        ></i>
       </div>
 
+      <!-- BOTÃO DO MAPA -->
       <button
         id="abrirMapa"
         class="w-6 h-20 bg-[var(--color-destaque)] rounded-4xl"
@@ -31,26 +54,29 @@
         <i class="text-2xl text-white bi bi-geo-alt-fill"></i>
       </button>
 
+      <!-- CONFIGURAÇÕES -->
       <button
         id="abrirModal"
-        class="text-lg text-white transition hover:text-[var(--color-destaque)] pb-2.5"
+        class="pb-2.5 text-lg text-white transition hover:text-[var(--color-destaque)]"
       >
         <i class="bi bi-gear-fill"></i>
       </button>
     </nav>
 
-    <!-- CONTEÚDO -->
-    <div class="w-[calc(100vw-47px)] absolute left-8 p-10">
-      <!-- =============== LOJAS COM CATALOGO ATIVO =============== -->
+    <!-- ================================================================================= -->
+    <!-- ==============================  CONTEÚDO PRINCIPAL  ============================= -->
+    <!-- ================================================================================= -->
+    <main class="absolute p-10 left-8 w-[calc(100vw-47px)]">
+      <!-- ===================== LISTA DE LOJAS COM CATÁLOGO ATIVO ===================== -->
       <h2 class="mb-4 text-xl font-bold">Lojas Disponíveis</h2>
 
-      <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 ">
+      <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         <div th:each="entry : ${catalogosPorNegocio}">
           <div
             th:if="${entry.key.catalogoAtivo}"
             class="flex flex-col overflow-hidden bg-white shadow-md rounded-xl"
           >
-            <!-- IMAGEM DO PAINEL -->
+            <!-- Imagem do painel -->
             <div
               class="relative flex items-center justify-center w-full h-32 bg-gray-200"
             >
@@ -66,9 +92,9 @@
               ></div>
             </div>
 
-            <!-- CORPO DO CARD -->
+            <!-- Corpo do card -->
             <div class="p-4">
-              <!-- LOGO -->
+              <!-- Logo + nome da loja -->
               <div class="flex items-center gap-3 mb-3">
                 <img
                   th:src="${entry.key.logoUrl != null ? entry.key.logoUrl : '/img/default-logo.png'}"
@@ -84,22 +110,18 @@
                 </div>
               </div>
 
-              <!-- DESCRIÇÃO -->
+              <!-- Descrição -->
               <p
                 class="mb-3 text-sm text-gray-600"
                 th:text="${entry.key.descricao != null ? entry.key.descricao : 'Sem descrição disponível.'}"
               ></p>
 
+              <!-- Telefone -->
               <p class="mb-4 text-sm text-gray-600">
-                📞
-                <span th:text="${entry.key.telefoneComercial}"></span>
+                📞 <span th:text="${entry.key.telefoneComercial}"></span>
               </p>
 
-              <p>
-                <span th:text="${entry.key.id}"
-              </p>
-
-              <!-- HORÁRIO -->
+              <!-- Horário -->
               <p class="mb-4 text-sm text-gray-600">
                 🕒
                 <span
@@ -111,20 +133,19 @@
                 ></span>
               </p>
 
-              <!-- BOTÃO -->
-              <button 
-    th:onclick="'abrirModalLoja(' + ${entry.key.id} + ')'"
-    class="..."
->
-    Ver Detalhes
-</button>
-
+              <!-- Botão -->
+              <button
+                th:onclick="|abrirModalLoja('${entry.key.id}')|"
+                class="..."
+              >
+                Ver Detalhes
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- =============== ITENS DE LOJAS SEM CATALOGO =============== -->
+      <!-- ==================== LISTA DE PRODUTOS DE LOJAS SEM CATÁLOGO ==================== -->
       <h2 class="mt-10 mb-4 text-xl font-bold">Produtos Disponíveis</h2>
 
       <div class="grid gap-6 p-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
@@ -133,11 +154,13 @@
           th:if="${!i.negocio.catalogoAtivo}"
           class="flex flex-col justify-between overflow-hidden transition-shadow duration-300 bg-white shadow-md rounded-2xl hover:shadow-xl"
         >
+          <!-- Imagem -->
           <img
             th:src="${#lists.isEmpty(i.imagens) ? '/img/no-image.png' : i.imagens[0].url}"
             class="object-cover w-full h-48 transition-transform duration-300 hover:scale-105"
           />
 
+          <!-- Informações do produto -->
           <div class="flex flex-col flex-grow p-4">
             <h3
               th:text="${i.nome}"
@@ -164,47 +187,53 @@
         </div>
       </div>
 
-      <!-- MODAL ÚNICO -->
-      <div id="modalUnico"
-     class="fixed inset-0 z-50 flex items-center hidden bg-black/50">
+      <!-- ================================================================================= -->
+      <!-- ===============================  MODAL ÚNICO LOJA ============================== -->
+      <!-- ================================================================================= -->
+      <div
+        id="modalUnico"
+        class="fixed inset-0 z-50 flex items-center hidden bg-black/50"
+      >
+        <div
+          id="modalConteiner"
+          class="w-[90%] max-w-3xl h-[calc(100vh-3rem)] mt-8 ml-10 overflow-hidden bg-gray-100 rounded-lg shadow-xl transition-all duration-300"
+        >
+          <!-- Etapa 1: Catálogo da loja -->
+          <div id="etapa1" class="h-full p-6 overflow-y-auto"></div>
 
-  <div id="modalConteiner"
-       class="bg-gray-100 shadow-xl rounded-lg overflow-hidden transition-all duration-300
-              w-[90%] max-w-3xl h-[calc(100vh-3rem)] mt-8 ml-10">
+          <!-- Etapa 2: Catálogo + Detalhes -->
+          <div id="etapa2" class="flex hidden h-full">
+            <!-- Lista de itens -->
+            <div
+              id="colCatalogo"
+              class="w-1/2 p-6 overflow-y-auto border-r"
+            ></div>
 
-      <!-- ETAPA 1 – SÓ CATÁLOGO -->
-      <div id="etapa1" class="h-full p-6 overflow-y-auto"></div>
+            <!-- Detalhes do item -->
+            <div id="colDetalhes" class="w-1/2 p-6 overflow-y-auto"></div>
+          </div>
 
-      <!-- ETAPA 2 – CATÁLOGO + DETALHES -->
-      <div id="etapa2" class="flex hidden h-full">
-
-         <!-- CATÁLOGO (LADO ESQUERDO) -->
-         <div id="colCatalogo" class="w-1/2 p-6 overflow-y-auto border-r"></div>
-
-         <!-- DETALHES DO PRODUTO (LADO DIREITO) -->
-         <div id="colDetalhes" class="w-1/2 p-6 overflow-y-auto"></div>
-
+          <!-- Botão fechar -->
+          <button
+            onclick="fecharModalLoja()"
+            class="relative text-2xl text-red-600 hover:text-black top-[-41rem] left-[46rem]"
+          >
+            &times;
+          </button>
+        </div>
       </div>
+    </main>
 
-      <button onclick="fecharModal()"
-              class="relative text-2xl text-red-600 hover:text-black top-[-41rem] left-[46rem]">
-          &times;
-      </button>
-  </div>
-
-</div>
-
-
-
-
-  </div>
-
-    <!-- =============== MAPA =============== -->
+    <!-- ================================================================================= -->
+    <!-- ===================================  MAPA  ====================================== -->
+    <!-- ================================================================================= -->
     <div
       id="modalMapa"
       class="fixed inset-0 z-50 items-center justify-center hidden mt-8 ml-8 bg-black/50"
     >
-      <div class="relative w-full max-w-3xl p-4 bg-gray-100 shadow-xl">
+      <div
+        class="relative w-full max-w-3xl p-4 bg-gray-100 rounded-lg shadow-xl"
+      >
         <!-- Fechar -->
         <button
           id="fecharMapa"
@@ -222,9 +251,106 @@
       </div>
     </div>
 
-    <!-- FIM CONTEÚDO -->
+    <!-- ================================================================================= -->
+    <!-- ==============================  MODAIS LATERAIS  ================================= -->
+    <!-- ================================================================================= -->
 
-    <!-- =============== SCRIPT CONFIGURAÇÕES =============== -->
+    <!-- ============================== MODAL PERFIL =============================== -->
+    <div
+      id="modalPerfil"
+      class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
+    >
+      <div class="p-6 bg-white shadow-lg w-96 rounded-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Meu Perfil</h2>
+          <button
+            onclick="fecharModal('modalPerfil')"
+            class="text-2xl text-gray-600"
+          >
+            &times;
+          </button>
+        </div>
+
+        <p class="text-gray-700">Informações do usuário:</p>
+        <p class="mt-2 text-gray-700">
+          Nome: <span th:text="${usuario.nome}"></span>
+        </p>
+        <p class="text-gray-700">
+          Email: <span th:text="${usuario.email}"></span>
+        </p>
+        <p class="text-gray-700">
+          Telefone: <span th:text="${usuario.telefone}"></span>
+        </p>
+        <p class="text-gray-700">
+          Endereço: <span th:text="${usuario.logradouro}"></span>
+        </p>
+      </div>
+    </div>
+
+    <!-- ============================== MODAL CARRINHO =============================== -->
+    <div
+      id="modalCarrinho"
+      class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
+    >
+      <div class="p-6 bg-white shadow-lg w-96 rounded-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Carrinho</h2>
+          <button
+            onclick="fecharModal('modalCarrinho')"
+            class="text-2xl text-gray-600"
+          >
+            &times;
+          </button>
+        </div>
+
+        <p class="text-gray-700">Itens do carrinho aparecerão aqui...</p>
+      </div>
+    </div>
+
+    <!-- ============================== MODAL AGENDAMENTOS =============================== -->
+    <div
+      id="modalAgenda"
+      class="fixed inset-0 z-10 flex items-center justify-center hidden bg-black/50"
+    >
+      <div class="p-6 bg-white shadow-lg w-96 rounded-xl h-[calc(100vh-3rem)] mt-[2.5rem] ml-10 absolute left-0 top-0">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Meus Agendamentos</h2>
+          <button
+            onclick="fecharModal('modalAgenda')"
+            class="text-2xl text-gray-600"
+          >
+            &times;
+          </button>
+        </div>
+
+        <p class="text-gray-700">Seus agendamentos vão aparecer aqui...</p>
+        <div id="listaAgendamentos" class="flex flex-col gap-3 mt-4"></div>
+      </div>
+    </div>
+
+    <!-- ============================== MODAL CHAT =============================== -->
+    <div
+      id="modalChat"
+      class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
+    >
+      <div class="p-6 bg-white shadow-lg w-96 rounded-xl">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Chat</h2>
+          <button
+            onclick="fecharModal('modalChat')"
+            class="text-2xl text-gray-600"
+          >
+            &times;
+          </button>
+        </div>
+
+        <p class="text-gray-700">Suas conversas vão aparecer aqui...</p>
+      </div>
+    </div>
+
+    <!-- ================================================================================= -->
+    <!-- ===============================  SCRIPT CONFIG  ================================= -->
+    <!-- ================================================================================= -->
     <script>
       const modalEl = document.getElementById("popup-modal");
       const conteudoModal = document.getElementById("conteudo-modal");
@@ -241,186 +367,366 @@
         .addEventListener("click", () => modal.show());
       document
         .getElementById("fecharModal")
-        .addEventListener("click", () => modal.hide());
+        ?.addEventListener("click", () => modal.hide());
       document
         .getElementById("fecharModal2")
-        .addEventListener("click", () => modal.hide());
+        ?.addEventListener("click", () => modal.hide());
     </script>
 
-    <!-- =============== SCRIPT DO MAPA =============== -->
+    <!-- ================================================================================= -->
+    <!-- ==============================  SCRIPT DO MAPA  ================================= -->
+    <!-- ================================================================================= -->
+
     <script th:inline="javascript">
-  const abrirMapa = document.getElementById("abrirMapa");
-  const modalMapa = document.getElementById("modalMapa");
-  const fecharMapa = document.getElementById("fecharMapa");
+      /*<![CDATA[*/
+      window.lojas = JSON.parse(/*[[${lojasJson}]]*/ "[]");
+      console.log("TESTE LOJAS =", window.lojas);
+      /*]]>*/
+    </script>
 
-  abrirMapa.onclick = () => {
-    modalMapa.classList.remove("hidden");
-    setTimeout(initMap, 100);
-  };
+    <script>
+      /* ========================================================= */
+      /* ============ FUNÇÃO: ABRIR MODAL DA LOJA ================= */
+      /* ========================================================= */
 
-  fecharMapa.onclick = () => modalMapa.classList.add("hidden");
-  modalMapa.onclick = (e) => { if (e.target === modalMapa) modalMapa.classList.add("hidden"); };
+      function abrirModalLoja(lojaId) {
+        const loja = lojas.find((l) => l.id == lojaId);
 
-  // Dados Thymeleaf
-  const usuarioLat = /*[[${usuario.latitude}]]*/ 0;
-  const usuarioLng = /*[[${usuario.longitude}]]*/ 0;
+        if (!loja) {
+          console.error("Loja não encontrada:", lojaId);
+          return;
+        }
 
-  const negocios = [
-    /*[# th:each="entry : ${catalogosPorNegocio}"]*/
-    {
-      nome: '[[${entry.key.nome}]]',
-      lat: '[[${entry.key.latitude}]]',
-      lng: '[[${entry.key.longitude}]]'
-    },
-    /*[/]*/
-];
+        let html = `
+              <h2 class="mb-4 text-2xl font-bold">${loja.nome}</h2>
+              <p class="mb-4 text-gray-600">🕒 ${loja.horaAbertura} - ${loja.horaFechamento}</p>
+              <div class="grid gap-4 sm:grid-cols-2">
+          `;
 
+        loja.itens.forEach((i) => {
+          const img = i.imagens[0] || "/img/no-image.png";
 
-  console.log(negocios);
+          html += `
+                  <div class="p-3 border rounded-lg shadow cursor-pointer"
+                       onclick="abrirItem(${loja.id}, ${i.id})">
 
-  let map;
-  function initMap() {
-    map = L.map('map').setView([usuarioLat, usuarioLng], 14);
+                      <img src="${img}" class="object-cover w-full h-32 mb-2 rounded">
+                      <h3 class="font-semibold">${i.nome}</h3>
+                      <p class="text-sm text-gray-600">${i.descricao}</p>
+                      <p class="mt-2 font-bold">R$ ${i.preco}</p>
+                  </div>
+              `;
+        });
 
-    // Tile do OpenStreetMap (GRÁTIS)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-    }).addTo(map);
+        html += "</div>";
 
-    // 🔵 Usuário
-    L.marker([usuarioLat, usuarioLng], { 
-      icon: L.icon({
-        iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png',
-        iconSize: [32, 32],
-        iconAnchor: [16, 32],
-      })
-    }).bindPopup("Você está aqui").addTo(map);
+        document.getElementById("etapa1").innerHTML = html;
 
-    // 🔴 Negócios
-    negocios.forEach(n => {
-      if (n.lat && n.lng) {
-        L.marker([n.lat, n.lng], {
-          icon: L.icon({
-            iconUrl: 'https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png',
-            iconSize: [32, 32],
-            iconAnchor: [16, 32],
-          })
-        }).bindPopup(n.nome).addTo(map);
+        document.getElementById("etapa1").classList.remove("hidden");
+        document.getElementById("etapa2").classList.add("hidden");
+        document.getElementById("modalConteiner").classList.add("max-w-3xl");
+
+        document.getElementById("modalUnico").classList.remove("hidden");
       }
-    });
-  }
-    </script>
 
-    <script th:inline="javascript">
-    const lojas = [
-        /*[# th:each="entry : ${catalogosPorNegocio}"]*/
-        {
-            id: '[[${entry.key.id}]]',
-            nome: '[[${entry.key.nome}]]',
-            horaAbertura: '[[${entry.key.horaAbertura}]]',
-            horaFechamento: '[[${entry.key.horaFechamento}]]',
+      /* ========================================================= */
+      /* ===================== ABRIR ITEM ========================= */
+      /* ========================================================= */
 
-            itens: [
-                /*[# th:each="i : ${entry.value}"]*/
-                {
-                    id: '[[${i.id}]]',
-                    nome: '[[${i.nome}]]',
-                    descricao: '[[${i.descricao}]]',
-                    preco: '[[${i.preco}]]',
-                    imagens: [
-                        /*[# th:each="img : ${i.imagens}"]*/
-                            '[[${img.url}]]',
-                        /*[/]*/
-                    ]
-                },
-                /*[/]*/
-            ]
-        },
-        /*[/]*/
-    ];
-</script>
+      function abrirItem(lojaId, itemId) {
+        const loja = lojas.find((l) => l.id == lojaId);
+        const item = loja.itens.find((i) => i.id == itemId);
 
+        /* === CATÁLOGO ESQUERDA === */
+        let cat = `
+              <h2 class="mb-2 text-xl font-bold">${loja.nome}</h2>
+              <p class="mb-4 text-sm text-gray-600">🕒 ${loja.horaAbertura} - ${
+          loja.horaFechamento
+        }</p>
+              <p class="mb-4 text-sm text-gray-600">Agendamentos: ${
+                loja.agendamentoAtivo ? "Sim" : "Não"
+              }</p>
+          `;
 
-<script>
-function abrirModalLoja(lojaId) {
-    const loja = lojas.find(l => String(l.id) === String(lojaId));
-    if (!loja) return;
+        loja.itens.forEach((i) => {
+          cat += `
+                  <div class="p-2 border-b cursor-pointer hover:bg-gray-100"
+                       onclick="abrirItem(${loja.id}, ${i.id})">
+                       ${i.nome}
+                  </div>
+              `;
+        });
 
-    let html = `<h2 class="mb-4 text-2xl font-bold">${loja.nome}</h2>`;
-    html += `<div class="grid gap-4 sm:grid-cols-2">`;
+        document.getElementById("colCatalogo").innerHTML = cat;
 
-    loja.itens.forEach(i => {
-        const img = (i.imagens[0] || '/img/no-image.png').replace(/"/g, '');
-        html += `
-            <div class="p-3 border rounded-lg shadow cursor-pointer"
-                 onclick="abrirItem('${loja.id}', '${i.id}')">
-                <img src="${img}" class="object-cover w-full h-32 mb-2 rounded">
-                <h3 class="font-semibold">${i.nome}</h3>
-                <p class="text-sm text-gray-600">${i.descricao}</p>
-                <p class="mt-2 font-bold">R$ ${i.preco}</p>
-            </div>
-        `;
-    });
+        /* === DETALHES DO ITEM === */
+        let det = `
+              <h2 class="mb-4 text-2xl font-bold">${item.nome}</h2>
+              <p><strong>Descrição:</strong> ${item.descricao}</p>
+              <p><strong>Preço:</strong> R$ ${item.preco}</p>
+              <p><strong>Duração:</strong> ${item.duracao ?? "–"} min</p>
 
-    html += "</div>";
+              <h3 class="mt-4 text-lg font-semibold">Imagens</h3>
+              <div class="grid grid-cols-2 gap-4">
+          `;
 
-    document.getElementById("etapa1").innerHTML = html;
+        item.imagens.forEach((img) => {
+          det += `<img src="${img}" class="w-full h-40 rounded">`;
+        });
 
-    document.getElementById("etapa1").classList.remove("hidden");
-    document.getElementById("etapa2").classList.add("hidden");
+        det += `</div>`;
 
-    document.getElementById("modalConteiner").classList.remove("max-w-5xl");
-    document.getElementById("modalConteiner").classList.add("max-w-3xl");
+        /* ------- SISTEMA DE AGENDAMENTO ------- */
+        if (loja.agendamentoAtivo) {
+          det += `
+                  <h3 class="mt-6 mb-2 text-lg font-semibold">Agendamento</h3>
 
-    document.getElementById("modalUnico").classList.remove("hidden");
-}
+                  <label class="block mb-2 text-sm text-gray-700">Selecione uma data:</label>
+                  <input type="date" id="dataAgendamento"
+                         class="w-full p-2 mb-4 border rounded"
+                         onchange="gerarHorarios(${lojaId}, ${itemId})">
 
-function abrirItem(lojaId, itemId) {
-    const loja = lojas.find(l => String(l.id) === String(lojaId));
-    const item = loja.itens.find(i => String(i.id) === String(itemId));
+                  <div id="horariosContainer"></div>
 
-    let cat = `<h2 class="mb-4 text-xl font-bold">${loja.nome}</h2>`;
-    loja.itens.forEach(i => {
-        cat += `
-        <div class="p-2 border-b cursor-pointer hover:bg-gray-100"
-             onclick="abrirItem('${loja.id}','${i.id}')">
-             ${i.nome}
-        </div>`;
-    });
+                  <div class="mt-6">
+                      <button
+                          onclick="confirmarAgendamento()"
+                          class="w-full p-3 text-white bg-green-600 rounded hover:bg-green-700">
+                          Confirmar Agendamento
+                      </button>
+                  </div>
+              `;
+        }
 
-    document.getElementById("colCatalogo").innerHTML = cat;
+        document.getElementById("colDetalhes").innerHTML = det;
 
-    let det = `
-        <h2 class="mb-4 text-2xl font-bold">${item.nome}</h2>
-        <p><strong>Descrição:</strong> ${item.descricao}</p>
-        <p><strong>Preço:</strong> R$ ${item.preco}</p>
-        <h3 class="mt-4 mb-2 text-lg font-semibold">Imagens</h3>
+        document.getElementById("etapa1").classList.add("hidden");
+        document.getElementById("etapa2").classList.remove("hidden");
+        document.getElementById("modalConteiner").classList.add("max-w-5xl");
+      }
+
+      /* ========================================================= */
+      /* ================ FUNÇÃO: GERAR HORÁRIOS ================== */
+      /* ========================================================= */
+
+      function gerarHorarios(lojaId, itemId) {
+        const loja = lojas.find((l) => l.id == lojaId);
+        const item = loja.itens.find((i) => i.id == itemId);
+
+        const duracao = item.duracao || 30;
+        const data = document.getElementById("dataAgendamento").value;
+
+        if (!data) {
+          document.getElementById("horariosContainer").innerHTML =
+            "<p class='col-span-3 text-red-600'>Selecione uma data.</p>";
+          return;
+        }
+
+        let inicio = loja.horaAbertura.substring(0, 5);
+        let fim = loja.horaFechamento.substring(0, 5);
+
+        let [h, m] = inicio.split(":").map(Number);
+        let [hFim, mFim] = fim.split(":").map(Number);
+
+        let horarios = [];
+
+        // --- CORREÇÃO: horário que vira madrugada ---
+        let passaMeiaNoite = false;
+        if (hFim < h || (hFim === h && mFim < m)) {
+          passaMeiaNoite = true;
+        }
+
+        // --- HORÁRIOS DO DIA NORMAL ---
+        while (h < 24 || (h === 23 && m < 60)) {
+          const horaFormatada = `${String(h).padStart(2, "0")}:${String(
+            m
+          ).padStart(2, "0")}`;
+          horarios.push(horaFormatada);
+
+          m += duracao;
+          if (m >= 60) {
+            m -= 60;
+            h++;
+          }
+          if (!passaMeiaNoite && h === hFim && m > mFim) break;
+        }
+
+        // --- COMPLETA DO OUTRO DIA SE PASSA A MEIA NOITE ---
+        if (passaMeiaNoite) {
+          h = 0;
+          m = 0;
+          while (h < hFim || (h === hFim && m <= mFim)) {
+            const horaFormatada = `${String(h).padStart(2, "0")}:${String(
+              m
+            ).padStart(2, "0")}`;
+            horarios.push(horaFormatada);
+
+            m += duracao;
+            if (m >= 60) {
+              m -= 60;
+              h++;
+            }
+          }
+        }
+
+        renderizarHorarios(horarios, lojaId, itemId, duracao);
+      }
+
+      /* ========================================================= */
+      /* ============== FUNÇÃO: EXIBIR HORÁRIOS ================== */
+      /* ========================================================= */
+
+      function renderizarHorarios(lista, duracao, lojaId, itemId) {
+        let html = `
+        <div class="flex flex-row flex-wrap items-center w-full gap-2">
     `;
 
-    if (item.imagens.length > 0) {
-        det += `<div class="grid grid-cols-2 gap-4">`;
-        item.imagens.forEach(img => {
-            const url = img.replace(/"/g, '');
-            det += `<img src="${url}" class="object-cover w-full h-40 rounded">`;
+        lista.forEach((hora) => {
+          html += `
+            <div 
+                class="px-4 py-2 text-gray-700 transition bg-white border rounded-full cursor-pointer horario-btn hover:bg-gray-200"
+                data-hora="${hora}"
+                onclick="selecionarHorario(this, '${lojaId}', '${itemId}', '${hora}', ${duracao})">
+                ${hora}
+            </div>
+        `;
         });
-        det += `</div>`;
-    }
 
-    document.getElementById("colDetalhes").innerHTML = det;
+        html += `</div>`;
 
-    document.getElementById("etapa1").classList.add("hidden");
-    document.getElementById("etapa2").classList.remove("hidden");
+        document.getElementById("horariosContainer").innerHTML = html;
+      }
 
-    document.getElementById("modalConteiner").classList.add("max-w-5xl");
-    document.getElementById("modalConteiner").classList.remove("max-w-3xl");
+      /* ========================================================= */
+      /* ============== FUNÇÃO: ESCOLHER HORÁRIO ================= */
+      /* ========================================================= */
+
+      function selecionarHorario(btn, lojaId, itemId, horaInicio, duracao) {
+        // Remove destaque de todas as barras
+        document.querySelectorAll(".horario-btn").forEach((b) => {
+          b.classList.remove("bg-green-600", "text-white");
+          b.classList.add("bg-white", "text-gray-700");
+        });
+
+        // Ativa destaque na selecionada
+        btn.classList.remove("bg-white", "text-gray-700");
+        btn.classList.add("bg-green-600", "text-white");
+
+        // Calcula hora fim
+        const [h, m] = horaInicio.split(":").map(Number);
+        const totalMinutos = h * 60 + m + duracao;
+
+        const horaFimH = String(Math.floor(totalMinutos / 60)).padStart(2, "0");
+        const horaFimM = String(totalMinutos % 60).padStart(2, "0");
+        const horaFim = `${horaFimH}:${horaFimM}`;
+
+        // Salva agendamento
+        window.agendamentoSelecionado = {
+          lojaId,
+          itemId,
+          data: document.getElementById("dataAgendamento").value,
+          horaInicio,
+          horaFim,
+          duracao,
+        };
+      }
+
+      /* ========================================================= */
+      /* ============== FUNÇÃO: CONFIRMAR AGENDAMENTO ============ */
+      /* ========================================================= */
+
+      function confirmarAgendamento() {
+        if (!window.agendamentoSelecionado) {
+          alert("Selecione um horário antes de confirmar.");
+          return;
+        }
+
+        fetch("/agendamentos/salvar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(window.agendamentoSelecionado),
+        })
+          .then((r) => r.json())
+          .then(() => {
+            alert("Agendamento confirmado!");
+            fecharModalLoja();
+          })
+          .catch(() => alert("Erro ao salvar agendamento."));
+      }
+
+      function fecharModalLoja() {
+        document.getElementById("modalUnico").classList.add("hidden");
+      }
+    </script>
+
+    <!-- ================================================================================= -->
+    <!-- =================== FUNÇÕES GERAIS PARA ABRIR/FECHAR MODAIS ===================== -->
+    <!-- ================================================================================= -->
+    <script>
+      function abrirModal(id) {
+        document.getElementById(id).classList.remove("hidden");
+      }
+
+      function fecharModal(id) {
+        document.getElementById(id).classList.add("hidden");
+      }
+    </script>
+
+    <script>
+      function abrirModalAgenda() {
+    fetch("/agendamentos/meus")
+        .then(r => r.json())
+        .then(lista => {
+
+            const container = document.getElementById("listaAgendamentos");
+            container.innerHTML = "";
+
+            if (!lista || lista.length === 0) {
+                container.innerHTML =
+                    "<p class='text-center text-gray-600'>Você ainda não possui agendamentos.</p>";
+                document.getElementById("modalAgenda").classList.remove("hidden");
+                return;
+            }
+
+            lista.forEach(a => {
+                const card = `
+                    <div class="flex flex-col gap-1 p-4 bg-white border shadow-sm rounded-xl">
+                        
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-800">${a.item}</h3>
+                            <span class="px-2 py-1 text-xs text-blue-700 bg-blue-100 rounded-full">
+                                ${a.data}
+                            </span>
+                        </div>
+
+                        <p class="flex items-center gap-1 text-sm text-gray-500">
+                            <i class="bi bi-shop"></i> ${a.negocio}
+                        </p>
+
+                        <div class="flex items-center justify-between p-2 mt-2 bg-gray-100 rounded-lg">
+                            <span class="font-medium text-green-700">
+                                ⏱ ${a.horaInicio} → ${a.horaFim}
+                            </span>
+
+                            <span class="text-sm text-gray-600">
+                                ${a.duracaoMinutos} min
+                            </span>
+                        </div>
+
+                    </div>
+                `;
+
+                container.innerHTML += card;
+            });
+
+            document.getElementById("modalAgenda").classList.remove("hidden");
+        })
+        .catch(err => {
+            console.error("Erro ao carregar agendamentos:", err);
+            alert("Erro ao carregar seus agendamentos.");
+        });
 }
 
-function fecharModal() {
-    document.getElementById("modalUnico").classList.add("hidden");
-}
-</script>
-
-
-
+    </script>
   </body>
 </html>

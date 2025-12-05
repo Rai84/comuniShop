@@ -1,5 +1,7 @@
 package com.pi.comuniShop.controller;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -14,10 +16,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import com.pi.comuniShop.model.Catalogo;
+import com.pi.comuniShop.model.ImagemCatalogo;
 import com.pi.comuniShop.model.Negocio;
 import com.pi.comuniShop.model.Usuario;
 import com.pi.comuniShop.repository.UsuarioRepository;
 import com.pi.comuniShop.repository.ImagemCatalogoRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.pi.comuniShop.service.CatalogoService;
 
@@ -43,28 +47,59 @@ public class LoginController {
     }
 
     @GetMapping("/usuario/home")
-    public String home(@AuthenticationPrincipal User user, Model model) {
-        
-        // busca o usuário logado
+    public String home(@AuthenticationPrincipal User user, Model model) throws Exception {
+
         Usuario usuario = usuarioRepository.findByEmail(user.getUsername())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        
-        log.info("🟢 Entrou no método /usuario/home para o usuário: {}", usuario.getEmail());
 
-        // carrega todos itens do catálogo
         List<Catalogo> itens = catalogoService.listarTodos();
-        log.info("📦 Itens carregados: {}", itens.size());
-        
-        // AGRUPA itens por negócio
-        Map<Negocio, List<Catalogo>> catalogosPorNegocio = itens.stream()
+
+        // AGRUPA por negócio
+        Map<Negocio, List<Catalogo>> mapa = itens.stream()
                 .collect(Collectors.groupingBy(Catalogo::getNegocio));
-        
-        // envia para a view
+
+        // ------------ CONVERTE PARA JSON LIMPO (USADO NO MODAL ÚNICO) -------------
+        List<Map<String, Object>> lojasList = new ArrayList<>();
+
+        for (Negocio n : mapa.keySet()) {
+            Map<String, Object> loja = new LinkedHashMap<>();
+            loja.put("id", n.getId());
+            loja.put("nome", n.getNome());
+            loja.put("horaAbertura", n.getHoraAbertura().toString());
+            loja.put("horaFechamento", n.getHoraFechamento().toString());
+            loja.put("agendamentoAtivo", n.isAgendamentoAtivo());
+
+            List<Map<String, Object>> itensList = new ArrayList<>();
+            for (Catalogo c : mapa.get(n)) {
+                Map<String, Object> item = new LinkedHashMap<>();
+                item.put("id", c.getId());
+                item.put("nome", c.getNome());
+                item.put("descricao", c.getDescricao());
+                item.put("preco", c.getPreco());
+                item.put("disponivel", c.isDisponivel());
+                item.put("duracao", c.getDuracaoMinutos());
+                item.put("imagens",
+                        c.getImagens().stream().map(ImagemCatalogo::getUrl).toList());
+                itensList.add(item);
+            }
+
+            loja.put("itens", itensList);
+            lojasList.add(loja);
+        }
+
+        String lojasJson = new ObjectMapper().writeValueAsString(lojasList);
+
+        // ----------------- ENVIA TUDO PARA A VIEW (HTML) -----------------------
+
         model.addAttribute("usuario", usuario);
-        model.addAttribute("itens", itens);                     // lista normal
-        model.addAttribute("catalogosPorNegocio", catalogosPorNegocio); // agrupado
-        model.addAttribute("imgRepo", ImagemCatalogoRepository);
-        
+
+        // O HTML AINDA USA ESSAS DUAS VARIÁVEIS:
+        model.addAttribute("itens", itens);
+        model.addAttribute("catalogosPorNegocio", mapa);
+
+        // JSON usado no modal novo
+        model.addAttribute("lojasJson", lojasJson);
+
         return "usuario/home";
     }
 
