@@ -31,14 +31,24 @@
           onclick="abrirModal('modalPerfil')"
           class="cursor-pointer bi bi-person-circle hover:text-[var(--color-destaque)]"
         ></i>
+        <div class="relative">
+          <i
+            onclick="abrirModalCarrinho()"
+            class="text-xl cursor-pointer bi bi-cart2"
+          ></i>
+
+          <span
+            id="badgeCarrinho"
+            class="hidden absolute top-[-0.2rem] right-[-0.2rem] bg-red-600 text-white text-xs font-bold px-0.5 py-0.5 rounded-full"
+          >
+            0
+          </span>
+        </div>
+
         <i
-          onclick="abrirModal('modalCarrinho')"
-          class="cursor-pointer bi bi-cart2 hover:text-[var(--color-destaque)]"
+          onclick="abrirModalAgenda()"
+          class="cursor-pointer bi bi-calendar-event hover:text-[var(--color-destaque)]"
         ></i>
-        <i
-  onclick="abrirModalAgenda()"
-  class="cursor-pointer bi bi-calendar-event hover:text-[var(--color-destaque)]"
-></i>
 
         <i
           onclick="abrirModal('modalChat')"
@@ -178,10 +188,10 @@
             </p>
 
             <button
-              onclick="abrirModalItem('[[${entry.key.id}]]', '[[${i.id}]]')"
-              class="inline-block w-full py-2 mt-3 text-sm font-medium text-center text-black rounded-lg bg-destaque hover:bg-destaque2"
+              th:onclick="|adicionarAoCarrinho(${i.id})|"
+              class="inline-block w-full py-2 mt-3 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700"
             >
-              Ver Detalhes
+              Adicionar ao Carrinho
             </button>
           </div>
         </div>
@@ -303,7 +313,21 @@
           </button>
         </div>
 
-        <p class="text-gray-700">Itens do carrinho aparecerão aqui...</p>
+        <div id="modalCarrinhoConteudo" class="flex flex-col gap-3"></div>
+
+        <button
+          onclick="limparCarrinho()"
+          class="w-full py-2 mt-4 text-white bg-red-600 rounded-lg hover:bg-red-700"
+        >
+          Limpar Carrinho
+        </button>
+
+        <button
+          onclick="finalizarPedido()"
+          class="w-full py-2 mt-2 text-white bg-green-600 rounded-lg hover:bg-green-700"
+        >
+          Finalizar Pedido
+        </button>
       </div>
     </div>
 
@@ -312,7 +336,9 @@
       id="modalAgenda"
       class="fixed inset-0 z-10 flex items-center justify-center hidden bg-black/50"
     >
-      <div class="p-6 bg-white shadow-lg w-96 rounded-xl h-[calc(100vh-3rem)] mt-[2.5rem] ml-10 absolute left-0 top-0">
+      <div
+        class="p-6 bg-white shadow-lg w-96 rounded-xl h-[calc(100vh-3rem)] mt-[2.5rem] ml-10 absolute left-0 top-0"
+      >
         <div class="flex items-center justify-between mb-4">
           <h2 class="text-xl font-semibold">Meus Agendamentos</h2>
           <button
@@ -654,7 +680,160 @@
           .catch(() => alert("Erro ao salvar agendamento."));
       }
 
+      // ===========================
+      // ADICIONAR AO CARRINHO
+      // ===========================
+      function adicionarAoCarrinho(itemId) {
+        fetch("/carrinho/adicionar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemId }),
+        })
+          .then((r) => r.json())
+          .then(() => {
+            carregarCarrinho();
+            atualizarBadgeCarrinho();
+            abrirModalCarrinho();
+          })
+          .catch(() => alert("Erro ao adicionar ao carrinho."));
+      }
+
+      // ===========================
+      // CARREGAR CARRINHO
+      // ===========================
+      function carregarCarrinho() {
+        fetch("/carrinho/listar")
+          .then((r) => r.json())
+          .then((lista) => {
+            const c = document.getElementById("modalCarrinhoConteudo");
+            c.innerHTML = "";
+
+            if (!lista || lista.length === 0) {
+              c.innerHTML = "<p class='text-gray-600'>Carrinho vazio.</p>";
+              return;
+            }
+
+            lista.forEach((item) => {
+              c.innerHTML += `
+                    <div class="flex items-center justify-between p-2 border-b">
+
+                        <div class="flex items-center gap-3">
+                            <img src="${item.imagem}" class="w-12 h-12 rounded">
+                            <div>
+                                <p class="font-semibold">${item.nome}</p>
+                                <p class="text-sm text-gray-600">R$ ${item.preco}</p>
+                                <p class="text-sm">Qtd: ${item.quantidade}</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+    <button onclick="alterarQtd(${item.id}, -1)"
+        class="px-2 py-1 text-lg font-bold text-white bg-red-600 rounded hover:bg-red-700">−</button>
+
+    <span class="px-3 py-1 bg-gray-200 rounded">${item.quantidade}</span>
+
+    <button onclick="alterarQtd(${item.id}, +1)"
+        class="px-2 py-1 text-lg font-bold text-white bg-green-600 rounded hover:bg-green-700">+</button>
+</div>
+
+                        </div>
+
+                        <button onclick="removerItem(${item.id})"
+                            class="text-xl text-red-600 hover:text-red-900">
+                            &times;
+                        </button>
+                    </div>
+                `;
+            });
+          });
+      }
+
+      // ===========================
+      // REMOVER ITEM
+      // ===========================
+      function removerItem(id) {
+        fetch("/carrinho/remover", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemId: id }),
+        })
+          .then((r) => r.json())
+          .then(() => carregarCarrinho())
+          .then(() => atualizarBadgeCarrinho());
+      }
+
+      // ===========================
+      // LIMPAR CARRINHO
+      // ===========================
+      function limparCarrinho() {
+        fetch("/carrinho/limpar", { method: "POST" }).then(() => {
+          carregarCarrinho();
+          atualizarBadgeCarrinho();
+        });
+      }
+
+      // ===========================
+      // ALTERAR QUANTIDADE
+
+      function alterarQtd(id, delta) {
+        fetch("/carrinho/alterar-quantidade", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ itemId: id, delta }),
+        })
+          .then((r) => r.json())
+          .then(() => carregarCarrinho())
+          .then(() => atualizarBadgeCarrinho())
+          .catch(() => alert("Erro ao atualizar quantidade"));
+      }
+
+      function atualizarBadgeCarrinho() {
+        fetch("/carrinho/listar")
+          .then((r) => r.json())
+          .then((lista) => {
+            const badge = document.getElementById("badgeCarrinho");
+
+            if (!lista || lista.length === 0) {
+              badge.classList.add("hidden");
+              return;
+            }
+
+            let totalQtd = lista.reduce(
+              (soma, item) => soma + item.quantidade,
+              0
+            );
+
+            badge.innerText = totalQtd;
+            badge.classList.remove("hidden");
+          });
+      }
+
+      function finalizarPedido() {
+        fetch("/carrinho/finalizar", { method: "POST" })
+          .then((r) => r.json())
+          .then((resp) => {
+            if (resp.erro) {
+              alert(resp.erro);
+              return;
+            }
+
+            alert("Pedido realizado! ID: " + resp.pedidoId);
+            carregarCarrinho();
+            atualizarBadgeCarrinho();
+            fecharModal("modalCarrinho");
+          })
+          .catch(() => alert("Erro ao finalizar pedido"));
+      }
+
+      // ===========================
+      // ABRIR MODAL DO CARRINHO
+      // ===========================
+      function abrirModalCarrinho() {
+        carregarCarrinho();
+        atualizarBadgeCarrinho();
+        document.getElementById("modalCarrinho").classList.remove("hidden");
+      }
+
       function fecharModalLoja() {
+        atualizarBadgeCarrinho();
         document.getElementById("modalUnico").classList.add("hidden");
       }
     </script>
@@ -674,22 +853,21 @@
 
     <script>
       function abrirModalAgenda() {
-    fetch("/agendamentos/meus")
-        .then(r => r.json())
-        .then(lista => {
-
+        fetch("/agendamentos/meus")
+          .then((r) => r.json())
+          .then((lista) => {
             const container = document.getElementById("listaAgendamentos");
             container.innerHTML = "";
 
             if (!lista || lista.length === 0) {
-                container.innerHTML =
-                    "<p class='text-center text-gray-600'>Você ainda não possui agendamentos.</p>";
-                document.getElementById("modalAgenda").classList.remove("hidden");
-                return;
+              container.innerHTML =
+                "<p class='text-center text-gray-600'>Você ainda não possui agendamentos.</p>";
+              document.getElementById("modalAgenda").classList.remove("hidden");
+              return;
             }
 
-            lista.forEach(a => {
-                const card = `
+            lista.forEach((a) => {
+              const card = `
                     <div class="flex flex-col gap-1 p-4 bg-white border shadow-sm rounded-xl">
                         
                         <div class="flex items-center justify-between">
@@ -716,17 +894,16 @@
                     </div>
                 `;
 
-                container.innerHTML += card;
+              container.innerHTML += card;
             });
 
             document.getElementById("modalAgenda").classList.remove("hidden");
-        })
-        .catch(err => {
+          })
+          .catch((err) => {
             console.error("Erro ao carregar agendamentos:", err);
             alert("Erro ao carregar seus agendamentos.");
-        });
-}
-
+          });
+      }
     </script>
   </body>
 </html>
