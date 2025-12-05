@@ -14,6 +14,10 @@ public class Pedido {
 
     private Long clienteId;
 
+    private Long negocioId;
+
+    private String status = "pendente";
+
     private BigDecimal total;
 
     private LocalDateTime criadoEm = LocalDateTime.now();
@@ -61,5 +65,20 @@ public class Pedido {
         this.itens = itens;
     }
 
+    public Long getNegocioId() {
+        return negocioId;
+    }
+
+    public void setNegocioId(Long negocioId) {
+        this.negocioId = negocioId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
     
 }

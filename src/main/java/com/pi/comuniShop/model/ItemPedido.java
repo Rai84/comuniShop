@@ -14,8 +14,17 @@ public class ItemPedido {
     private String nome;
     private int quantidade;
     private BigDecimal precoUnitario;
+    private BigDecimal totalItem;
 
     // getters e setters
+
+    public BigDecimal getTotalItem() {
+        return totalItem;
+    }
+
+    public void setTotalItem(BigDecimal totalItem) {
+        this.totalItem = totalItem;
+    }
 
     public Long getId() {
         return id;

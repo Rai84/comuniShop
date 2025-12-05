@@ -46,9 +46,15 @@
         </div>
 
         <i
-          onclick="abrirModalAgenda()"
-          class="cursor-pointer bi bi-calendar-event hover:text-[var(--color-destaque)]"
+          onclick="abrirModalPedidos()"
+          class="cursor-pointer bi bi-receipt-cutoff hover:text-[var(--color-destaque)]"
         ></i>
+
+        <i 
+    onclick="abrirModalAgenda()"
+    class="cursor-pointer bi bi-calendar-event hover:text-[var(--color-destaque)]"
+></i>
+
 
         <i
           onclick="abrirModal('modalChat')"
@@ -331,6 +337,29 @@
       </div>
     </div>
 
+    <!-- ============================== MODAL PEDIDOS =============================== -->
+
+    <div
+      id="modalPedidos"
+      class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]"
+    >
+      <div
+        class="p-6 bg-white shadow-lg w-96 rounded-xl h-[calc(100vh-3rem)] mt-[2.5rem] ml-10 absolute left-0 top-0"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-semibold">Pedidos</h2>
+          <button
+            onclick="fecharModal('modalPedidos')"
+            class="text-2xl text-gray-600"
+          >
+            &times;
+          </button>
+        </div>
+
+        <div id="listaPedidos" class="flex flex-col gap-3 mt-4"></div>
+      </div>
+    </div>
+
     <!-- ============================== MODAL AGENDAMENTOS =============================== -->
     <div
       id="modalAgenda"
@@ -602,13 +631,13 @@
       /* ============== FUNÇÃO: EXIBIR HORÁRIOS ================== */
       /* ========================================================= */
 
-      function renderizarHorarios(lista, duracao, lojaId, itemId) {
-        let html = `
+      function renderizarHorarios(lista, lojaId, itemId, duracao) {
+    let html = `
         <div class="flex flex-row flex-wrap items-center w-full gap-2">
     `;
 
-        lista.forEach((hora) => {
-          html += `
+    lista.forEach((hora) => {
+        html += `
             <div 
                 class="px-4 py-2 text-gray-700 transition bg-white border rounded-full cursor-pointer horario-btn hover:bg-gray-200"
                 data-hora="${hora}"
@@ -616,12 +645,13 @@
                 ${hora}
             </div>
         `;
-        });
+    });
 
-        html += `</div>`;
+    html += `</div>`;
 
-        document.getElementById("horariosContainer").innerHTML = html;
-      }
+    document.getElementById("horariosContainer").innerHTML = html;
+}
+
 
       /* ========================================================= */
       /* ============== FUNÇÃO: ESCOLHER HORÁRIO ================= */
@@ -835,6 +865,69 @@
       function fecharModalLoja() {
         atualizarBadgeCarrinho();
         document.getElementById("modalUnico").classList.add("hidden");
+      }
+
+      function abrirModalPedidos() {
+        fetch("/pedidos/meus")
+          .then((r) => r.json())
+          .then((lista) => {
+            const container = document.getElementById("listaPedidos");
+            container.innerHTML = "";
+
+            if (!lista || lista.length === 0) {
+              container.innerHTML =
+                "<p class='text-center text-gray-600'>Você ainda não possui pedidos.</p>";
+              document
+                .getElementById("modalPedidos")
+                .classList.remove("hidden");
+              return;
+            }
+
+            lista.forEach((pedido) => {
+              const itensHTML = pedido.itens
+                .map(
+                  (i) => `
+                        <div class="flex justify-between text-sm">
+                            <span>${i.nome} (x${i.quantidade})</span>
+                            <span>R$ ${i.precoUnitario}</span>
+                        </div>
+                    `
+                )
+                .join("");
+
+              container.innerHTML += `
+                    <div class="p-4 bg-white border shadow-sm rounded-xl">
+                        
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-lg font-semibold text-gray-800">
+                                Pedido #${pedido.id}
+                            </h3>
+                            <span class="px-2 py-1 text-xs text-blue-700 bg-blue-100 rounded-full">
+                                ${pedido.status}
+                            </span>
+                        </div>
+
+                        <p class="mt-1 text-sm text-gray-500">
+                            Loja: <strong>${pedido.loja}</strong>
+                        </p>
+
+                        <div class="p-2 mt-3 bg-gray-100 rounded-lg">
+                            ${itensHTML}
+                        </div>
+
+                        <p class="mt-3 font-semibold text-right">
+                            Total: R$ ${pedido.total}
+                        </p>
+                    </div>
+                `;
+            });
+
+            document.getElementById("modalPedidos").classList.remove("hidden");
+          })
+          .catch((err) => {
+            console.error("Erro ao carregar pedidos:", err);
+            alert("Erro ao carregar seus pedidos.");
+          });
       }
     </script>
 

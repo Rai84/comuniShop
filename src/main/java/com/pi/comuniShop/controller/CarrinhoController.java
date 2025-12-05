@@ -135,47 +135,48 @@ public class CarrinhoController {
     }
 
     @PostMapping("/finalizar")
-public ResponseEntity<?> finalizarPedido(HttpSession session,
-        @AuthenticationPrincipal User user) {
+    public ResponseEntity<?> finalizarPedido(HttpSession session,
+            @AuthenticationPrincipal User user) {
 
-    // buscar itens do carrinho
-    List<CarrinhoItem> carrinho = getCarrinho(session);
-    if (carrinho == null || carrinho.isEmpty()) {
-        return ResponseEntity.badRequest().body(Map.of("erro", "Carrinho vazio"));
+        List<CarrinhoItem> carrinho = getCarrinho(session);
+        if (carrinho == null || carrinho.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("erro", "Carrinho vazio"));
+        }
+
+        BigDecimal total = carrinho.stream()
+                .map(i -> i.getPreco().multiply(BigDecimal.valueOf(i.getQuantidade())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        List<ItemPedido> itensPedido = carrinho.stream().map(i -> {
+            ItemPedido ip = new ItemPedido();
+            ip.setItemId(i.getId());
+            ip.setNome(i.getNome());
+            ip.setQuantidade(i.getQuantidade());
+            ip.setPrecoUnitario(i.getPreco());
+            ip.setTotalItem(i.getPreco().multiply(BigDecimal.valueOf(i.getQuantidade())));
+            return ip;
+        }).toList();
+
+        Pedido pedido = new Pedido();
+
+        // ------------------------------
+        // PEGAR A LOJA DO PRIMEIRO ITEM
+        // ------------------------------
+        Catalogo cat = catalogoRepo.findById(carrinho.get(0).getId()).get();
+        pedido.setNegocioId(cat.getNegocio().getId());
+
+        pedido.setClienteId(usuarioRepository.findByEmail(user.getUsername()).get().getId());
+        pedido.setItens(itensPedido);
+        pedido.setTotal(total);
+
+        pedidoRepository.save(pedido);
+
+        session.removeAttribute("carrinho");
+
+        return ResponseEntity.ok(Map.of(
+                "status", "ok",
+                "msg", "Pedido realizado com sucesso!",
+                "pedidoId", pedido.getId()));
     }
-
-    // calcular total
-    BigDecimal total = carrinho.stream()
-            .map(i -> i.getPreco().multiply(BigDecimal.valueOf(i.getQuantidade())))
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-
-    // transformar itens em ItemPedido
-    List<ItemPedido> itensPedido = carrinho.stream().map(i -> {
-        ItemPedido ip = new ItemPedido();
-        ip.setItemId(i.getId());
-        ip.setNome(i.getNome());
-        ip.setQuantidade(i.getQuantidade());
-        ip.setPrecoUnitario(i.getPreco());
-        return ip;
-    }).toList();
-
-    // salvar pedido
-    Pedido pedido = new Pedido();
-    pedido.setClienteId(usuarioRepository.findByEmail(user.getUsername()).get().getId());
-    pedido.setItens(itensPedido);
-    pedido.setTotal(total);
-
-    pedidoRepository.save(pedido);
-
-    // limpar carrinho
-    session.removeAttribute("carrinho");
-
-    // retorno
-    return ResponseEntity.ok(Map.of(
-        "status", "ok",
-        "msg", "Pedido realizado com sucesso!",
-        "pedidoId", pedido.getId()
-    ));
-}
 
 }
